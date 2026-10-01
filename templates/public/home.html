@@ -41,7 +41,7 @@
         <span class="intake-dot" aria-hidden="true"></span>
         <span class="intake-text">Sept 2026 · open</span>
       </span>
-      <a href="{% url 'auth:signup' %}" class="btn btn-ink">Apply <span class="btn-arrow" aria-hidden="true">↗</span></a>
+      <a href="{% url 'auth:login' %}" class="btn btn-ink">Sign In <span class="btn-arrow" aria-hidden="true">↗</span></a>
       <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" data-menu-toggle>
         <span></span><span></span>
       </button>
@@ -58,7 +58,7 @@
 
     <p class="hero-eyebrow reveal" data-reveal>
       <span class="eyebrow-line" aria-hidden="true"></span>
-      Nayolites College · Est. 1981 · Nairobi
+      Nayolites College · Nairobi
     </p>
 
     <h1 class="hero-title" aria-label="Turn curiosity into craft.">
@@ -72,8 +72,8 @@
         taught by people who still make things.
       </p>
       <div class="hero-actions reveal" data-reveal>
-        <a href="#programmes" class="btn btn-lime btn-lg">Explore programmes <span class="btn-arrow" aria-hidden="true">→</span></a>
-        <a href="{% url 'public:admissions' %}" class="btn btn-ghost btn-lg">Admissions</a>
+        <a href="{% url 'auth:signup' %}" class="btn btn-lime btn-lg">Apply now <span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a href="#programmes" class="btn btn-ghost btn-lg">Explore programmes</a>
       </div>
     </div>
 
@@ -253,8 +253,8 @@
           <dt class="stat-label">Industry partners taking<br>placements each year</dt>
         </div>
         <div class="stat">
-          <dd class="stat-num" data-count="45" data-suffix="yrs">0yrs</dd>
-          <dt class="stat-label">Since first cohort<br>walked through the door</dt>
+          <dd class="stat-num" data-count="2026" data-suffix="">2026</dd>
+          <dt class="stat-label">Year we opened<br>our doors in Nairobi</dt>
         </div>
       </dl>
 
@@ -339,7 +339,7 @@
         {# <img src="{% static 'img/nayolites-logo.png' %}" alt="Nayolites" class="wordmark-logo"> #}
         <span class="wordmark-text">Nayolites<span class="wordmark-dot">.</span></span>
       </a>
-      <p class="footer-tag">Turn curiosity into craft. Nairobi, since 1981.</p>
+      <p class="footer-tag">Turn curiosity into craft. Nairobi.</p>
     </div>
 
     <div class="footer-col">
