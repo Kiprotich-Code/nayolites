@@ -1,0 +1,79 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Enter Results – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:results' %}">Results</a></li>
+<li class="breadcrumb-item active">Enter Results</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Enter Results</h1>
+    <p class="page-subtitle">Select a period and unit, then enter scores for each student.</p>
+  </div>
+</div>
+
+<div class="form-section" style="max-width: 780px;">
+  <div class="form-section-title">Select Context</div>
+  <div class="row g-3" style="margin-bottom: 1.5rem;">
+    <div class="col-md-4">
+      <label class="form-label">Academic Period</label>
+      <select class="form-select">
+        <option>— Select period —</option>
+        {% for p in periods %}<option>{{ p.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Course</label>
+      <select class="form-select">
+        <option>— Select course —</option>
+        {% for c in courses %}<option>{{ c.name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Course Unit</label>
+      <select class="form-select">
+        <option>— Select unit —</option>
+        <option>DCS 201 – Software Engineering</option>
+        <option>DCS 202 – Web Application Development</option>
+        <option>DCS 203 – Computer Networks</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-section-title" style="margin-top: 0.5rem;">Student Scores — DCS 201 Software Engineering</div>
+  <table class="nay-table" style="border: 1px solid var(--nay-border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1.5rem;">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Admission</th>
+        <th style="text-align:center">CAT Score (out of 40)</th>
+        <th style="text-align:center">Exam Score (out of 60)</th>
+        <th style="text-align:center">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students|slice:":6" %}
+      <tr>
+        <td style="font-weight: 500;">{{ s.name }}</td>
+        <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.admission }}</td>
+        <td style="text-align:center;">
+          <input type="number" class="form-control" style="width: 80px; margin: 0 auto; text-align: center;" min="0" max="40" placeholder="—">
+        </td>
+        <td style="text-align:center;">
+          <input type="number" class="form-control" style="width: 80px; margin: 0 auto; text-align: center;" min="0" max="60" placeholder="—">
+        </td>
+        <td style="text-align:center; font-weight: 600; color: var(--nay-text-muted);">—</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div style="display: flex; gap: 0.75rem;">
+    <button class="btn btn-primary">Save as Draft</button>
+    <button class="btn btn-secondary">Submit for Review</button>
+    <a href="{% url 'staff:results' %}" class="btn btn-secondary">Cancel</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,384 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nayolites College — Turn curiosity into craft</title>
+<meta name="description" content="Nayolites College. Three schools. Computing, Media, Creative Arts. Built for the modern workplace.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/home.css'%}">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a1d33'/%3E%3Ctext x='16' y='22' font-family='Inter,sans-serif' font-size='18' font-weight='900' fill='%23d4ff3f' text-anchor='middle'%3EN%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ============ NAV ============ -->
+<header class="site-header" data-header>
+  <div class="container nav-container">
+    <a href="#top" class="wordmark" aria-label="Nayolites home">
+      {# <img src="{% static 'img/nayolites-logo.png' %}" alt="Nayolites" class="wordmark-logo"> #}
+      <span class="wordmark-text">Nayolites<span class="wordmark-dot">.</span></span>
+    </a>
+
+    <nav class="main-nav" aria-label="Primary">
+      <ul class="nav-menu">
+        <li><a href="#programmes" class="nav-link"><span>Programmes</span></a></li>
+        <li><a href="#schools" class="nav-link"><span>Schools</span></a></li>
+        <li><a href="#proof" class="nav-link"><span>Outcomes</span></a></li>
+        <li><a href="#life" class="nav-link"><span>Campus</span></a></li>
+        <li><a href="#contact" class="nav-link"><span>Contact</span></a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-end">
+      <span class="intake-pill" data-intake>
+        <span class="intake-dot" aria-hidden="true"></span>
+        <span class="intake-text">Sept 2026 · open</span>
+      </span>
+      <a href="{% url 'auth:signup' %}" class="btn btn-ink">Apply <span class="btn-arrow" aria-hidden="true">↗</span></a>
+      <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" data-menu-toggle>
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="hero-noise" aria-hidden="true"></div>
+  <div class="container hero-inner">
+
+    <p class="hero-eyebrow reveal" data-reveal>
+      <span class="eyebrow-line" aria-hidden="true"></span>
+      Nayolites College · Est. 1981 · Nairobi
+    </p>
+
+    <h1 class="hero-title" aria-label="Turn curiosity into craft.">
+      <span class="line"><span class="word" data-word>Turn</span> <span class="word" data-word>curiosity</span></span>
+      <span class="line"><span class="word italic" data-word>into</span> <span class="word" data-word>craft.</span></span>
+    </h1>
+
+    <div class="hero-foot">
+      <p class="hero-sub reveal" data-reveal>
+        Three schools. One campus. Computing, media and creative arts —
+        taught by people who still make things.
+      </p>
+      <div class="hero-actions reveal" data-reveal>
+        <a href="#programmes" class="btn btn-lime btn-lg">Explore programmes <span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a href="{% url 'public:admissions' %}" class="btn btn-ghost btn-lg">Admissions</a>
+      </div>
+    </div>
+
+  </div>
+
+  <figure class="hero-plate reveal" data-reveal aria-hidden="true">
+    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop&sat=-100" alt="" loading="eager">
+  </figure>
+</section>
+
+<!-- ============ 1 · TRUST MARQUEE ============ -->
+<section class="marquee" aria-label="Accreditations and partners">
+  <div class="marquee-track" data-marquee>
+    <div class="marquee-group">
+      <span>Commission for University Education</span><span class="dot">·</span>
+      <span>Adobe Creative Campus</span><span class="dot">·</span>
+      <span>BBC Africa Talent Partner</span><span class="dot">·</span>
+      <span>Safaricom Graduate Pipeline</span><span class="dot">·</span>
+      <span>Google Africa Developer Scholarship</span><span class="dot">·</span>
+      <span>British Council Connected</span><span class="dot">·</span>
+    </div>
+    <div class="marquee-group" aria-hidden="true">
+      <span>Commission for University Education</span><span class="dot">·</span>
+      <span>Adobe Creative Campus</span><span class="dot">·</span>
+      <span>BBC Africa Talent Partner</span><span class="dot">·</span>
+      <span>Safaricom Graduate Pipeline</span><span class="dot">·</span>
+      <span>Google Africa Developer Scholarship</span><span class="dot">·</span>
+      <span>British Council Connected</span><span class="dot">·</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 · PROGRAMMES ============ -->
+<section class="programmes" id="programmes">
+  <div class="container">
+
+    <header class="section-head reveal" data-reveal>
+      <p class="section-kicker"><span>01</span> Programmes</p>
+      <h2 class="section-title">Twenty-eight ways<br>to make a living making things.</h2>
+      <p class="section-lede">
+        Every programme is built with an employer, reviewed every two years,
+        and taught in studios — not lecture halls.
+      </p>
+    </header>
+
+    <ul class="prog-list" data-prog-list>
+
+      {% for course in featured_courses %}
+      <li class="prog reveal" data-reveal>
+        <a href="{% url 'public:course_detail' course.slug %}" class="prog-row">
+          <span class="prog-num">{{ forloop.counter|stringformat:"02d" }}</span>
+          <span class="prog-main">
+            <span class="prog-name">{{ course.name }}</span>
+            <span class="prog-meta">{{ course.code }} · {{ course.duration }}{% if course.unit_count %} · {{ course.unit_count }} units{% endif %}</span>
+          </span>
+          <span class="prog-tags"><i>{{ course.code }}</i></span>
+          <span class="prog-go" aria-hidden="true">→</span>
+        </a>
+      </li>
+      {% empty %}
+      {# Fallback shown only when no courses exist in context #}
+      <li class="prog reveal" data-reveal>
+        <a href="{% url 'public:courses' %}" class="prog-row">
+          <span class="prog-num">01</span>
+          <span class="prog-main">
+            <span class="prog-name">Diploma in Computer Science</span>
+            <span class="prog-meta">Computing · 2 years</span>
+          </span>
+          <span class="prog-tags"><i>Computing</i></span>
+          <span class="prog-go" aria-hidden="true">→</span>
+        </a>
+      </li>
+      {% endfor %}
+
+    </ul>
+
+    <div class="section-foot reveal" data-reveal>
+      <a href="{% url 'public:courses' %}" class="link-arrow">View all programmes <span aria-hidden="true">→</span></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 3 · STATEMENT ============ -->
+<section class="statement" aria-label="Statement">
+  <div class="container">
+    <p class="statement-text reveal" data-reveal>
+      We are <em>not</em> a lecture hall with a website.
+      We are a workshop where the work is the point —
+      <span class="hl">made, shipped, critiqued, remade.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ============ 4 · SCHOOLS ============ -->
+<section class="schools" id="schools">
+  <div class="container">
+
+    <header class="section-head reveal" data-reveal>
+      <p class="section-kicker"><span>02</span> Schools</p>
+      <h2 class="section-title">Three schools.<br>One campus. No silos.</h2>
+    </header>
+
+    <div class="school-grid">
+
+      <article class="school reveal" data-reveal>
+        <p class="school-idx">School 01</p>
+        <h3 class="school-name">Computing</h3>
+        <p class="school-desc">
+          Software, systems, data and machine learning.
+          Studio-based from year one. Every student ships
+          a public project before graduation.
+        </p>
+        <dl class="school-meta">
+          <div><dt>Head</dt><dd>Dr. Amina Okafor</dd></div>
+          <div><dt>Programmes</dt><dd>11</dd></div>
+          <div><dt>Studio hours</dt><dd>60%</dd></div>
+        </dl>
+      </article>
+
+      <article class="school reveal" data-reveal>
+        <p class="school-idx">School 02</p>
+        <h3 class="school-name">Media &<br>Communication</h3>
+        <p class="school-desc">
+          Film, audio, journalism and documentary. Working
+          newsroom and post-production suites on campus,
+          run with BBC Africa talent partners.
+        </p>
+        <dl class="school-meta">
+          <div><dt>Head</dt><dd>Prof. James Mwangi</dd></div>
+          <div><dt>Programmes</dt><dd>9</dd></div>
+          <div><dt>Studio hours</dt><dd>55%</dd></div>
+        </dl>
+      </article>
+
+      <article class="school reveal" data-reveal>
+        <p class="school-idx">School 03</p>
+        <h3 class="school-name">Creative Arts</h3>
+        <p class="school-desc">
+          Graphic design, animation, illustration and type.
+          Adobe Creative Campus. Critiques every Friday —
+          the way a studio actually works.
+        </p>
+        <dl class="school-meta">
+          <div><dt>Head</dt><dd>Dr. Leila Haddad</dd></div>
+          <div><dt>Programmes</dt><dd>8</dd></div>
+          <div><dt>Studio hours</dt><dd>65%</dd></div>
+        </dl>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 · PROOF ============ -->
+<section class="proof" id="proof">
+  <div class="container">
+
+    <header class="section-head reveal" data-reveal>
+      <p class="section-kicker"><span>03</span> Outcomes</p>
+      <h2 class="section-title">We measure what<br>happens after.</h2>
+    </header>
+
+    <div class="proof-grid">
+
+      <dl class="stat-stack reveal" data-reveal>
+        <div class="stat">
+          <dd class="stat-num" data-count="94" data-suffix="%">0%</dd>
+          <dt class="stat-label">Employed or self-employed<br>within 6 months · Class of 2024</dt>
+        </div>
+        <div class="stat">
+          <dd class="stat-num" data-count="2400" data-suffix="+">0+</dd>
+          <dt class="stat-label">Students across<br>three schools, 2026</dt>
+        </div>
+        <div class="stat">
+          <dd class="stat-num" data-count="312" data-suffix="">0</dd>
+          <dt class="stat-label">Industry partners taking<br>placements each year</dt>
+        </div>
+        <div class="stat">
+          <dd class="stat-num" data-count="45" data-suffix="yrs">0yrs</dd>
+          <dt class="stat-label">Since first cohort<br>walked through the door</dt>
+        </div>
+      </dl>
+
+      <figure class="quote reveal" data-reveal>
+        <blockquote>
+          "I came in wanting to be a designer. I left able to run
+          a studio. The critiques were brutal in the best way —
+          nothing at Nayolites lets you hide behind a rough draft."
+        </blockquote>
+        <figcaption>
+          <img class="quote-face" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop&sat=-60" alt="" loading="lazy">
+          <span>
+            <strong>Wanjiru Kamau</strong>
+            <em>BA Graphic Design, 2022 · Designer, Nairobi</em>
+          </span>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 · CAMPUS FILMSTRIP ============ -->
+<section class="life" id="life">
+  <div class="container section-head reveal" data-reveal>
+    <p class="section-kicker"><span>04</span> Campus</p>
+    <h2 class="section-title">A working campus,<br>not a photo op.</h2>
+    <p class="section-lede">Scroll sideways →</p>
+  </div>
+
+  <div class="filmstrip" data-strip>
+    <figure class="frame">
+      <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=1200&auto=format&fit=crop&sat=-70" alt="Students in a workshop" loading="lazy">
+      <figcaption><span>01</span> Open studio, Wednesday</figcaption>
+    </figure>
+    <figure class="frame">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop&sat=-70" alt="Students collaborating" loading="lazy">
+      <figcaption><span>02</span> Cross-school project</figcaption>
+    </figure>
+    <figure class="frame">
+      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop&sat=-70" alt="Studio space" loading="lazy">
+      <figcaption><span>03</span> Post-production suite</figcaption>
+    </figure>
+    <figure class="frame">
+      <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1200&auto=format&fit=crop&sat=-70" alt="Library" loading="lazy">
+      <figcaption><span>04</span> The reading room</figcaption>
+    </figure>
+    <figure class="frame">
+      <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=1200&auto=format&fit=crop&sat=-70" alt="Lecture" loading="lazy">
+      <figcaption><span>05</span> Guest critique</figcaption>
+    </figure>
+    <figure class="frame">
+      <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1200&auto=format&fit=crop&sat=-70" alt="Campus" loading="lazy">
+      <figcaption><span>06</span> End-of-year show</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 7 · CTA ============ -->
+<section class="apply" id="apply">
+  <div class="container apply-inner reveal" data-reveal>
+    <p class="section-kicker invert"><span>05</span> Admissions</p>
+    <h2 class="apply-title">
+      September 2026 is open.<br>
+      <em>The work starts then.</em>
+    </h2>
+    <div class="apply-actions">
+      <a href="{% url 'auth:signup' %}" class="btn btn-lime btn-lg">Start an application <span class="btn-arrow" aria-hidden="true">→</span></a>
+      <a href="{% url 'public:admissions' %}" class="btn btn-ghost-light btn-lg">Talk to admissions</a>
+    </div>
+    <p class="apply-note">Rolling deadline · Scholarship applications close 30 June.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer" id="contact">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="#top" class="wordmark on-dark">
+        {# <img src="{% static 'img/nayolites-logo.png' %}" alt="Nayolites" class="wordmark-logo"> #}
+        <span class="wordmark-text">Nayolites<span class="wordmark-dot">.</span></span>
+      </a>
+      <p class="footer-tag">Turn curiosity into craft. Nairobi, since 1981.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <address>
+        12 University Avenue<br>
+        Nairobi, Kenya
+      </address>
+      <a href="mailto:hello@nayolites.ac.ke">hello@nayolites.ac.ke</a>
+      <a href="tel:+254700123456">+254 700 123 456</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <a href="{% url 'public:courses' %}">Programmes</a>
+      <a href="#schools">Schools</a>
+      <a href="#proof">Outcomes</a>
+      <a href="#life">Campus</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Apply</h4>
+      <a href="{% url 'public:admissions' %}">Admissions</a>
+      <a href="{% url 'public:admissions' %}">Scholarships</a>
+      <a href="{% url 'public:admissions' %}">International students</a>
+      <a href="{% url 'public:contact' %}">Request a prospectus</a>
+    </div>
+  </div>
+
+  <div class="container footer-base">
+    <p>© 2026 Nayolites College. All rights reserved.</p>
+    <ul class="footer-legal">
+      <li><a href="{% url 'public:contact' %}">Privacy</a></li>
+      <li><a href="{% url 'public:contact' %}">Terms</a></li>
+      <li><a href="#">Accessibility</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script src="{% static 'js/home.js'%}" defer></script>
+</body>
+</html>

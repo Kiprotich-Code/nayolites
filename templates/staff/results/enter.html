@@ -1,0 +1,191 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Enter Results – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:results' %}">Results</a></li>
+<li class="breadcrumb-item active">Enter Results</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Enter Results</h1>
+</div>
+
+{% if step == 1 %}
+{# ---- Step 1: Select context ---- #}
+<div style="max-width: 640px;">
+  <div class="nay-card" style="margin-bottom: 1.5rem;">
+    <div class="nay-card-header"><span class="nay-card-title">Select Course, Unit and Period</span></div>
+    <form method="post" novalidate id="context-form">
+      {% csrf_token %}
+      <div class="row g-3" style="padding-top: 0.5rem;">
+        <div class="col-md-6">
+          <label class="form-label">Course *</label>
+          {{ context_form.course.as_widget }}
+          {% if context_form.course.errors %}<div class="form-text text-danger">{{ context_form.course.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Course Unit *</label>
+          <select name="course_unit" id="id_course_unit" class="form-select" required
+                  data-selected="{{ context_form.course_unit.value|default:'' }}">
+            <option value="">— Select a course first —</option>
+            {# Populated by JS; on POST re-render, also populated by server #}
+            {% for unit in context_form.course_unit %}
+              {{ unit }}
+            {% endfor %}
+          </select>
+          {% if context_form.course_unit.errors %}<div class="form-text text-danger">{{ context_form.course_unit.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Academic Period *</label>
+          {{ context_form.academic_period.as_widget }}
+          {% if context_form.academic_period.errors %}<div class="form-text text-danger">{{ context_form.academic_period.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+      <div style="margin-top: 1.25rem;">
+        <button type="submit" name="load_students" value="1" class="btn btn-primary">Load Students</button>
+        <a href="{% url 'staff:results' %}" class="btn btn-secondary" style="margin-left: 0.5rem;">Cancel</a>
+      </div>
+    </form>
+  </div>
+  <p style="font-size: 0.8125rem; color: var(--nay-text-muted);">
+    Only students with Active or Pending enrollments in the selected course and period will appear.
+  </p>
+</div>
+
+{% else %}
+{# ---- Step 2: Score entry table ---- #}
+<div style="margin-bottom: 1rem; background: var(--nay-blue-light); border: 1px solid var(--nay-border); border-radius: 6px; padding: 0.75rem 1rem;">
+  <span style="font-size: 0.875rem;">
+    <strong>{{ course.code }}</strong> — {{ unit.code }} {{ unit.name }} &middot; {{ period.name }}
+    &middot; <span style="color: var(--nay-text-muted);">{{ rows|length }} student{{ rows|length|pluralize }}</span>
+  </span>
+</div>
+
+{% if rows %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="course_id" value="{{ course.pk }}">
+  <input type="hidden" name="unit_id" value="{{ unit.pk }}">
+  <input type="hidden" name="period_id" value="{{ period.pk }}">
+
+  <div class="nay-table-wrapper" style="margin-bottom: 1.5rem;">
+    <div style="overflow-x: auto;">
+      <table class="nay-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Admission No.</th>
+            <th style="text-align:center; width: 110px;">CAT (0–40)</th>
+            <th style="text-align:center; width: 110px;">Exam (0–60)</th>
+            <th style="text-align:center; width: 80px;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+          <tr>
+            <td style="font-weight: 500;">{{ row.enrollment.student.user.get_full_name }}</td>
+            <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ row.enrollment.student.admission_number }}</td>
+            <td style="text-align:center;">
+              <input type="number" name="{{ row.enrollment.pk }}-score_cat"
+                value="{{ row.form.score_cat.value|default:'' }}"
+                min="0" max="40" step="0.5"
+                class="form-control" style="width: 90px; margin: 0 auto; text-align: center;">
+            </td>
+            <td style="text-align:center;">
+              <input type="number" name="{{ row.enrollment.pk }}-score_exam"
+                value="{{ row.form.score_exam.value|default:'' }}"
+                min="0" max="60" step="0.5"
+                class="form-control" style="width: 90px; margin: 0 auto; text-align: center;">
+            </td>
+            <td style="text-align:center;">
+              {% if row.existing_result %}
+              <span class="badge-status status-{% if row.existing_result.status == 'PUBLISHED' %}success{% elif row.existing_result.status == 'APPROVED' %}info{% elif row.existing_result.status == 'SUBMITTED' %}warning{% else %}secondary{% endif %}">
+                {{ row.existing_result.get_status_display }}
+              </span>
+              {% else %}
+              <span style="font-size: 0.75rem; color: var(--nay-text-muted);">New</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem;">
+    <button type="submit" class="btn btn-primary">Save Results</button>
+    <a href="{% url 'staff:results_enter' %}" class="btn btn-secondary">Change Selection</a>
+    <a href="{% url 'staff:results' %}" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-title">No enrolled students</div>
+  <div class="empty-state-desc">No students with Active or Pending enrollments found for {{ course.code }} in {{ period.name }}.</div>
+</div>
+<a href="{% url 'staff:results_enter' %}" class="btn btn-secondary" style="margin-top: 1rem;">Change Selection</a>
+{% endif %}
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{% if step == 1 %}
+<script>
+(function () {
+  const courseSelect  = document.getElementById('id_course');
+  const unitSelect    = document.getElementById('id_course_unit');
+  const ajaxUrl       = '{% url "staff:ajax_course_units" %}';
+
+  if (!courseSelect || !unitSelect) return;
+
+  function loadUnits(courseId, selectedId) {
+    unitSelect.innerHTML = '<option value="">— Loading… —</option>';
+    unitSelect.disabled = true;
+
+    if (!courseId) {
+      unitSelect.innerHTML = '<option value="">— Select a course first —</option>';
+      unitSelect.disabled = false;
+      return;
+    }
+
+    fetch(ajaxUrl + '?course_id=' + courseId, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      unitSelect.innerHTML = '<option value="">— Select unit —</option>';
+      data.units.forEach(function (u) {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.textContent = u.code + ' — ' + u.name;
+        if (selectedId && String(u.id) === String(selectedId)) {
+          opt.selected = true;
+        }
+        unitSelect.appendChild(opt);
+      });
+      unitSelect.disabled = false;
+    })
+    .catch(function () {
+      unitSelect.innerHTML = '<option value="">— Failed to load units —</option>';
+      unitSelect.disabled = false;
+    });
+  }
+
+  courseSelect.addEventListener('change', function () {
+    loadUnits(this.value, null);
+  });
+
+  // On page load: if a course is already selected (e.g. after validation error),
+  // reload units and re-select the previously chosen unit.
+  const initialCourse = courseSelect.value;
+  const initialUnit   = unitSelect.dataset.selected || '';
+  if (initialCourse) {
+    loadUnits(initialCourse, initialUnit);
+  }
+}());
+</script>
+{% endif %}
+{% endblock %}

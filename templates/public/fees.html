@@ -1,0 +1,85 @@
+{% extends "components/base_public.html" %}
+{% block title %}Fees – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<div style="background: var(--nay-blue); color: #fff; padding: 3rem 0;">
+  <div class="public-container">
+    <p style="font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nay-accent); margin-bottom: 0.5rem;">Fees</p>
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Fees and Financing</h1>
+    <p style="color: rgba(255,255,255,0.7); font-size: 1rem; max-width: 680px;">{{ intro }}</p>
+  </div>
+</div>
+
+<section class="public-section">
+  <div class="public-container">
+
+    <div class="nay-table-wrapper" style="margin-bottom: 2.5rem;">
+      <div class="nay-table-header">
+        <span style="font-weight: 600;">Fee Structure – Current Academic Year</span>
+        <span style="font-size: 0.8125rem; color: var(--nay-text-muted);">All amounts in {{ college.currency }}</span>
+      </div>
+      <table class="nay-table">
+        <thead>
+          <tr>
+            <th>Programme</th>
+            <th>Duration</th>
+            <th style="text-align:right">Registration</th>
+            <th style="text-align:right">Tuition/Sem</th>
+            <th style="text-align:right">Materials</th>
+            <th style="text-align:right">Examination</th>
+            <th style="text-align:right">Total/Sem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in fee_table %}
+          <tr>
+            <td>
+              <div style="font-weight: 500;">{{ row.course_name }}</div>
+              <div style="font-size: 0.75rem; color: var(--nay-text-muted);">{{ row.code }}</div>
+            </td>
+            <td style="color: var(--nay-text-muted);">{{ row.duration }}</td>
+            <td style="text-align:right">{{ college.currency_symbol }} {{ row.registration|floatformat:"0" }}</td>
+            <td style="text-align:right">{{ college.currency_symbol }} {{ row.tuition_per_semester|floatformat:"0" }}</td>
+            <td style="text-align:right">{{ college.currency_symbol }} {{ row.materials|floatformat:"0" }}</td>
+            <td style="text-align:right">{{ college.currency_symbol }} {{ row.examination|floatformat:"0" }}</td>
+            <td style="text-align:right; font-weight: 600; color: var(--nay-blue);">{{ college.currency_symbol }} {{ row.total_per_semester|floatformat:"0" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="nay-card">
+          <div class="nay-card-header"><span class="nay-card-title">Payment Methods</span></div>
+          <div style="display: grid; gap: 1rem; font-size: 0.875rem;">
+            {% for pm in payment_methods %}
+            <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--nay-border-soft);">
+              <div style="font-weight: 600; margin-bottom: 0.25rem;">{{ pm.method }}</div>
+              <div style="color: var(--nay-text-muted);">{{ pm.details }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="nay-card">
+          <div class="nay-card-header"><span class="nay-card-title">Important Notes</span></div>
+          <ul style="padding-left: 1.25rem; margin: 0; font-size: 0.875rem;">
+            {% for note in notes %}
+            <li style="color: var(--nay-text-muted); margin-bottom: 0.625rem; line-height: 1.6;">{{ note }}</li>
+            {% endfor %}
+          </ul>
+          <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--nay-border-soft); font-size: 0.875rem;">
+            <div style="font-weight: 600; margin-bottom: 0.25rem;">Finance Office</div>
+            <div style="color: var(--nay-text-muted);">{{ finance_contact.phone }} &middot; <a href="mailto:{{ finance_contact.email }}">{{ finance_contact.email }}</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

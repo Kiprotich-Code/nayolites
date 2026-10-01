@@ -1,0 +1,50 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Academic Periods – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Academic Periods</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Academic Periods</h1>
+    <p class="page-subtitle">{{ periods|length }} periods configured.</p>
+  </div>
+  <a href="#" class="btn btn-primary">Create Period</a>
+</div>
+
+<div class="nay-table-wrapper">
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Period Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th style="text-align:center">Enrollments</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in periods %}
+      <tr>
+        <td style="font-weight: 600;">{{ p.name }}</td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ p.start }}</td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ p.end }}</td>
+        <td style="text-align:center; font-weight: 600;">{{ p.enrolled }}</td>
+        <td><span class="badge-status status-{{ p.sc }}">{{ p.status }}</span></td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="#" class="btn btn-sm btn-secondary">Edit</a>
+            {% if p.status == 'Active' %}
+            <a href="#" class="btn btn-sm btn-secondary" style="color: var(--nay-danger);">Close</a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

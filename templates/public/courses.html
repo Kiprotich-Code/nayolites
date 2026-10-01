@@ -1,0 +1,62 @@
+{% extends "components/base_public.html" %}
+{% block title %}Programmes – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<div style="background: var(--nay-blue); color: #fff; padding: 3rem 0;">
+  <div class="public-container">
+    <p style="font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nay-accent); margin-bottom: 0.5rem;">Academic Programmes</p>
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Our Programmes</h1>
+    <p style="color: rgba(255,255,255,0.7); font-size: 1rem;">{{ total }} programme{{ total|pluralize }} available for enrolment.</p>
+  </div>
+</div>
+
+<section class="public-section">
+  <div class="public-container">
+
+    <form method="get" style="margin-bottom: 2rem; display: flex; gap: 0.75rem; max-width: 480px;">
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search programmes…">
+      <button type="submit" class="btn btn-secondary">Search</button>
+      {% if q %}<a href="{% url 'courses:list' %}" class="btn btn-secondary">Clear</a>{% endif %}
+    </form>
+
+    {% if courses %}
+    <div class="row g-4">
+      {% for course in courses %}
+      <div class="col-md-6 col-lg-4">
+        <a href="{% url 'courses:detail' course.slug %}" class="course-card">
+          <div class="course-card-category">{{ course.duration }}</div>
+          <div class="course-card-name">{{ course.name }}</div>
+          <p style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.6; margin: 0; flex: 1;">
+            {{ course.description|truncatechars:130 }}
+          </p>
+          <div class="course-card-meta">
+            <span>{{ course.code }}</span>
+            <span>{{ course.unit_count }} unit{{ course.unit_count|pluralize }}</span>
+          </div>
+          <div style="padding-top: 0.75rem; font-size: 0.8125rem; color: var(--nay-blue-mid); font-weight: 500; border-top: 1px solid var(--nay-border-soft);">View programme →</div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 3rem 0; color: var(--nay-text-muted);">
+      {% if q %}
+      No programmes match "{{ q }}". <a href="{% url 'courses:list' %}">View all programmes.</a>
+      {% else %}
+      No programmes are currently available for enrolment. Please check back soon or <a href="{% url 'public:contact' %}">contact us</a>.
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section style="background: var(--nay-blue); padding: 3rem 0;">
+  <div class="public-container" style="text-align: center;">
+    <h2 style="color: #fff; font-size: 1.375rem; font-weight: 700; margin-bottom: 0.75rem;">Ready to enrol?</h2>
+    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;">Choose a programme, submit your application, and our admissions team will be in touch.</p>
+    <a href="{% url 'public:admissions' %}" class="btn btn-lg" style="background: var(--nay-accent); color: var(--nay-blue); font-weight: 700;">Learn About Admissions</a>
+  </div>
+</section>
+
+{% endblock %}

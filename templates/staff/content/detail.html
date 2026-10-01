@@ -1,0 +1,78 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ item.title }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:content' %}">Content</a></li>
+<li class="breadcrumb-item active">{{ item.title|truncatechars:40 }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ item.title }}</h1>
+    <p class="page-subtitle">{{ item.course.code }}{% if item.course_unit %} · {{ item.course_unit.code }}{% endif %}</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem;">
+    {% if can_edit %}
+    <a href="{% url 'staff:content_edit' item.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+    {% endif %}
+    {% if can_delete %}
+    <a href="{% url 'staff:content_delete' item.pk %}" class="btn btn-secondary btn-sm" style="color: var(--nay-danger);">Delete</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Details</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Course</span>
+        <span><a href="{% url 'staff:course_detail' item.course.pk %}">{{ item.course.code }} — {{ item.course.name }}</a></span>
+        {% if item.course_unit %}
+        <span class="detail-label">Unit</span>
+        <span style="font-family: monospace; font-size: 0.875rem;">{{ item.course_unit.code }} — {{ item.course_unit.name }}</span>
+        {% endif %}
+        <span class="detail-label">Type</span>
+        <span>{{ item.get_content_type_display }}</span>
+        <span class="detail-label">Visibility</span>
+        <span><span class="badge-status status-{% if item.visibility == 'ENROLLED' %}success{% elif item.visibility == 'ALL' %}info{% else %}secondary{% endif %}">{{ item.get_visibility_display }}</span></span>
+        <span class="detail-label">Uploaded</span>
+        <span>{{ item.created_at|date:"d M Y, H:i" }}</span>
+        <span class="detail-label">By</span>
+        <span>{{ item.uploaded_by|default:"—" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    {% if item.description %}
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Description</span></div>
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.7; margin: 0.5rem 0 0;">{{ item.description }}</p>
+    </div>
+    {% endif %}
+
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Access</span></div>
+      {% if item.file %}
+      <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--nay-border-soft);">
+        <p style="font-size: 0.8125rem; font-weight: 600; color: var(--nay-text-muted); margin-bottom: 0.25rem;">File</p>
+        <a href="{{ item.file.url }}" target="_blank" class="btn btn-sm btn-primary">Download / View</a>
+        <span style="font-size: 0.8125rem; color: var(--nay-text-muted); margin-left: 0.5rem;">{{ item.file.name|slice:"8:" }}</span>
+      </div>
+      {% endif %}
+      {% if item.url %}
+      <div style="padding: 0.75rem 0;">
+        <p style="font-size: 0.8125rem; font-weight: 600; color: var(--nay-text-muted); margin-bottom: 0.25rem;">URL</p>
+        <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary">Open Link</a>
+        <span style="font-size: 0.75rem; color: var(--nay-text-muted); word-break: break-all; display: block; margin-top: 0.25rem;">{{ item.url }}</span>
+      </div>
+      {% endif %}
+      {% if not item.file and not item.url %}
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin: 0.5rem 0 0;">No file or URL attached.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

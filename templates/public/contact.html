@@ -1,0 +1,103 @@
+{% extends "components/base_public.html" %}
+{% block title %}Contact – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<div style="background: var(--nay-blue); color: #fff; padding: 3rem 0;">
+  <div class="public-container">
+    <p style="font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nay-accent); margin-bottom: 0.5rem;">Contact</p>
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Get in Touch</h1>
+    <p style="color: rgba(255,255,255,0.7); font-size: 1rem;">We're happy to answer questions about admissions, fees, or any other enquiry.</p>
+  </div>
+</div>
+
+<section class="public-section">
+  <div class="public-container">
+    <div class="row g-5">
+
+      <div class="col-lg-5">
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1.25rem;">Our Offices</h2>
+        <div class="nay-card" style="margin-bottom: 1.5rem;">
+          <div style="font-size: 0.875rem; margin-bottom: 1rem;">
+            <div style="font-weight: 600; margin-bottom: 0.25rem;">{{ address.building }}</div>
+            <div style="color: var(--nay-text-muted);">{{ address.street }}, {{ address.city }}, {{ address.country }}</div>
+            <div style="color: var(--nay-text-muted);">{{ address.po_box }}</div>
+          </div>
+          <div style="background: var(--nay-blue-light); border-radius: var(--radius-sm); height: 160px; display: flex; align-items: center; justify-content: center; color: var(--nay-blue-mid); font-size: 0.875rem;">
+            Kimathi Street, Nairobi CBD
+          </div>
+        </div>
+
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">Office Hours</h2>
+        <div class="nay-card" style="margin-bottom: 1.5rem; font-size: 0.875rem;">
+          {% for h in hours %}
+          <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--nay-border-soft);">
+            <span style="color: var(--nay-text-muted);">{{ h.day }}</span>
+            <span style="font-weight: 500;">{{ h.time }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1.25rem;">Department Contacts</h2>
+        <div class="nay-table-wrapper" style="margin-bottom: 2rem;">
+          <table class="nay-table">
+            <thead>
+              <tr>
+                <th>Department</th>
+                <th>Phone</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in contacts %}
+              <tr>
+                <td style="font-weight: 500;">{{ c.label }}</td>
+                <td><a href="tel:{{ c.phone }}">{{ c.phone }}</a></td>
+                <td><a href="mailto:{{ c.email }}">{{ c.email }}</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1.25rem;">Send Us a Message</h2>
+        <div class="nay-card">
+          <form>
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <label class="form-label">Full name</label>
+                <input type="text" class="form-control" placeholder="Your full name">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label">Email address</label>
+                <input type="email" class="form-control" placeholder="your@email.com">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Subject</label>
+                <select class="form-select">
+                  <option>General Enquiry</option>
+                  <option>Admissions</option>
+                  <option>Fees and Finance</option>
+                  <option>Academic</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Message</label>
+                <textarea class="form-control" rows="4" placeholder="Your message..."></textarea>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Send Message</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ page_title }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:students' %}">Students</a></li>
+{% if student %}<li class="breadcrumb-item"><a href="{% url 'staff:student_detail' student.pk %}">{{ student.user.get_full_name }}</a></li>{% endif %}
+<li class="breadcrumb-item active">{{ action|title }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ page_title }}</h1>
+    {% if action == 'create' %}<p class="page-subtitle">Create a new student record and account.</p>{% endif %}
+  </div>
+</div>
+
+<div style="max-width: 760px;">
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="nay-alert nay-alert-danger mb-3">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Account Information</span></div>
+      <div class="row g-3" style="padding-top: 0.25rem;">
+        <div class="col-md-6">
+          <label class="form-label">First Name *</label>
+          {{ form.first_name.as_widget }}
+          {% if form.first_name.errors %}<div class="form-text text-danger">{{ form.first_name.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Last Name *</label>
+          {{ form.last_name.as_widget }}
+          {% if form.last_name.errors %}<div class="form-text text-danger">{{ form.last_name.errors.0 }}</div>{% endif %}
+        </div>
+        {% if action == 'create' %}
+        <div class="col-md-8">
+          <label class="form-label">Email Address *</label>
+          {{ form.email.as_widget }}
+          {% if form.email.errors %}<div class="form-text text-danger">{{ form.email.errors.0 }}</div>{% endif %}
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+          <label class="form-label">Phone</label>
+          {{ form.phone.as_widget }}
+          {% if form.phone.errors %}<div class="form-text text-danger">{{ form.phone.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Student Information</span></div>
+      <div class="row g-3" style="padding-top: 0.25rem;">
+        {% if action == 'create' %}
+        <div class="col-md-6">
+          <label class="form-label">Admission Number *</label>
+          {{ form.admission_number.as_widget }}
+          <div class="form-text">{{ form.admission_number.help_text }}</div>
+          {% if form.admission_number.errors %}<div class="form-text text-danger">{{ form.admission_number.errors.0 }}</div>{% endif %}
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+          <label class="form-label">Date of Birth</label>
+          {{ form.date_of_birth.as_widget }}
+          {% if form.date_of_birth.errors %}<div class="form-text text-danger">{{ form.date_of_birth.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Gender</label>
+          {{ form.gender.as_widget }}
+          {% if form.gender.errors %}<div class="form-text text-danger">{{ form.gender.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">County</label>
+          {{ form.county.as_widget }}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Address</label>
+          {{ form.address.as_widget }}
+        </div>
+      </div>
+    </div>
+
+    <div class="nay-card" style="margin-bottom: 1.5rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Emergency Contact</span></div>
+      <div class="row g-3" style="padding-top: 0.25rem;">
+        <div class="col-md-8">
+          <label class="form-label">Name</label>
+          {{ form.emergency_contact_name.as_widget }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Phone</label>
+          {{ form.emergency_contact_phone.as_widget }}
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn btn-primary">
+        {% if action == 'create' %}Create Student{% else %}Save Changes{% endif %}
+      </button>
+      {% if student %}
+      <a href="{% url 'staff:student_detail' student.pk %}" class="btn btn-secondary">Cancel</a>
+      {% else %}
+      <a href="{% url 'staff:students' %}" class="btn btn-secondary">Cancel</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

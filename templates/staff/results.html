@@ -1,0 +1,87 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Results – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Results</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Results</h1>
+    <p class="page-subtitle">Manage, review, approve, and publish student results.</p>
+  </div>
+  <a href="{% url 'staff:results_enter' %}" class="btn btn-primary">Enter Results</a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem;">
+  <div class="stat-card"><div class="stat-card-label">Draft</div><div class="stat-card-value" style="color:#6b7280">1</div><div class="stat-card-sub">Awaiting submission</div></div>
+  <div class="stat-card"><div class="stat-card-label">Under Review</div><div class="stat-card-value" style="color:#92400e">1</div><div class="stat-card-sub">Pending approval</div></div>
+  <div class="stat-card"><div class="stat-card-label">Approved</div><div class="stat-card-value" style="color:#1e40af">1</div><div class="stat-card-sub">Ready to publish</div></div>
+  <div class="stat-card"><div class="stat-card-label">Published</div><div class="stat-card-value" style="color:#166534">2</div><div class="stat-card-sub">Visible to students</div></div>
+</div>
+  <div class="stat-card"><div class="stat-card-label">Under Review</div><div class="stat-card-value" style="color: var(--nay-warning);">1</div></div>
+  <div class="stat-card"><div class="stat-card-label">Approved</div><div class="stat-card-value" style="color: var(--nay-info);">1</div></div>
+  <div class="stat-card"><div class="stat-card-label">Published</div><div class="stat-card-value" style="color: var(--nay-success);">2</div></div>
+</div>
+
+<div class="nay-table-wrapper">
+  <div class="nay-table-header">
+    <div style="display: flex; gap: 0.75rem; flex: 1;">
+      <select class="form-select" style="max-width: 200px;">
+        <option>All Periods</option>
+        {% for p in periods %}<option>{{ p.name }}</option>{% endfor %}
+      </select>
+      <select class="form-select" style="max-width: 160px;">
+        <option>All Statuses</option>
+        <option>Draft</option>
+        <option>Review</option>
+        <option>Approved</option>
+        <option>Published</option>
+      </select>
+    </div>
+  </div>
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Admission</th>
+        <th>Unit</th>
+        <th>Period</th>
+        <th style="text-align:center">CAT</th>
+        <th style="text-align:center">Exam</th>
+        <th style="text-align:center">Total</th>
+        <th style="text-align:center">Grade</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in results %}
+      <tr>
+        <td style="font-weight: 500;">{{ r.student }}</td>
+        <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ r.admission }}</td>
+        <td>
+          <div style="font-size: 0.8125rem; font-weight: 500;">{{ r.unit_code }}</div>
+          <div style="font-size: 0.75rem; color: var(--nay-text-muted);">{{ r.unit_name }}</div>
+        </td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ r.period }}</td>
+        <td style="text-align:center">{{ r.cat|default:"—" }}</td>
+        <td style="text-align:center">{{ r.exam|default:"—" }}</td>
+        <td style="text-align:center; font-weight: 600;">{{ r.total|default:"—" }}</td>
+        <td style="text-align:center; font-weight: 700; color: var(--nay-blue-mid);">{{ r.grade|default:"—" }}</td>
+        <td><span class="badge-status status-{{ r.sc }}">{{ r.status }}</span></td>
+        <td>
+          <div style="display: flex; gap: 0.25rem;">
+            <a href="{% url 'staff:result_detail' r.pk %}" class="btn btn-sm btn-secondary">View</a>
+            {% if r.status == 'Draft' %}<a href="#" class="btn btn-sm btn-secondary">Edit</a>{% endif %}
+            {% if r.status == 'Review' %}<a href="#" class="btn btn-sm btn-primary">Approve</a>{% endif %}
+            {% if r.status == 'Approved' %}<a href="#" class="btn btn-sm btn-primary">Publish</a>{% endif %}
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

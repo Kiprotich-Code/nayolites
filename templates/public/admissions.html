@@ -1,0 +1,94 @@
+{% extends "components/base_public.html" %}
+{% block title %}Admissions – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<div style="background: var(--nay-blue); color: #fff; padding: 3rem 0;">
+  <div class="public-container">
+    <p style="font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nay-accent); margin-bottom: 0.5rem;">Admissions</p>
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Join Nayolites</h1>
+    <p style="color: rgba(255,255,255,0.7); font-size: 1rem; max-width: 600px;">{{ intro }}</p>
+  </div>
+</div>
+
+<section class="public-section">
+  <div class="public-container">
+    <div class="row g-5">
+      <div class="col-lg-8">
+
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1.25rem;">Intake Schedule</h2>
+        <div style="border: 1px solid var(--nay-border); border-radius: var(--radius); overflow: hidden; margin-bottom: 2.5rem;">
+          {% for intake in intakes %}
+          <div style="padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--nay-border-soft); gap: 1rem; {% if forloop.last %}border-bottom: none;{% endif %}">
+            <div>
+              <div style="font-weight: 600; font-size: 0.9375rem;">{{ intake.period }}</div>
+              <div style="font-size: 0.8125rem; color: var(--nay-text-muted);">Classes begin: {{ intake.classes_begin }}</div>
+            </div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="font-size: 0.8125rem; color: var(--nay-text-muted); margin-bottom: 0.25rem;">Application deadline</div>
+              <div style="font-size: 0.875rem; font-weight: 500;">{{ intake.application_deadline }}</div>
+            </div>
+            <div>
+              {% if intake.status == 'open' %}
+                <span class="badge-status status-success">Open</span>
+              {% elif intake.status == 'upcoming' %}
+                <span class="badge-status status-info">Upcoming</span>
+              {% else %}
+                <span class="badge-status status-secondary">Closed</span>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1.25rem;">Application Process</h2>
+        <div style="display: grid; gap: 1rem; margin-bottom: 2.5rem;">
+          {% for step in process_steps %}
+          <div style="display: flex; gap: 1.25rem; align-items: flex-start;">
+            <div style="width: 32px; height: 32px; background: var(--nay-blue); color: var(--nay-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; flex-shrink: 0;">{{ step.step }}</div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.9375rem; margin-bottom: 0.25rem;">{{ step.title }}</div>
+              <div style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.6;">{{ step.description }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">General Requirements</h2>
+        <ul style="padding-left: 1.25rem; margin: 0;">
+          {% for req in general_requirements %}
+          <li style="font-size: 0.9375rem; color: var(--nay-text-muted); margin-bottom: 0.5rem; line-height: 1.6;">{{ req }}</li>
+          {% endfor %}
+        </ul>
+
+      </div>
+
+      <div class="col-lg-4">
+        <div class="nay-card" style="margin-bottom: 1.5rem;">
+          <div class="nay-card-header"><span class="nay-card-title">Admissions Office</span></div>
+          <div style="font-size: 0.875rem; display: grid; gap: 0.75rem;">
+            <div><span style="color: var(--nay-text-muted); display: block; font-size: 0.75rem; margin-bottom: 0.125rem;">Location</span>{{ contact.office }}</div>
+            <div><span style="color: var(--nay-text-muted); display: block; font-size: 0.75rem; margin-bottom: 0.125rem;">Phone</span><a href="tel:{{ contact.phone }}">{{ contact.phone }}</a></div>
+            <div><span style="color: var(--nay-text-muted); display: block; font-size: 0.75rem; margin-bottom: 0.125rem;">Email</span><a href="mailto:{{ contact.email }}">{{ contact.email }}</a></div>
+            <div><span style="color: var(--nay-text-muted); display: block; font-size: 0.75rem; margin-bottom: 0.125rem;">Office Hours</span>{{ contact.hours }}</div>
+          </div>
+        </div>
+
+        <div class="nay-card">
+          <div class="nay-card-header"><span class="nay-card-title">Available Programmes</span></div>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem;">
+            {% for course in courses %}
+            <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--nay-border-soft);">
+              <a href="{% url 'public:course_detail' course.slug %}" style="color: var(--nay-text);">
+                <div style="font-weight: 500;">{{ course.name }}</div>
+                <div style="font-size: 0.75rem; color: var(--nay-text-muted);">{{ course.duration }} &middot; {{ course.category }}</div>
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

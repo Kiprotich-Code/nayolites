@@ -1,0 +1,52 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ course.code }} Units – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:courses' %}">Courses</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:course_detail' course.pk %}">{{ course.code }}</a></li>
+<li class="breadcrumb-item active">Units</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ course.code }} — Course Units</h1>
+    <p class="page-subtitle">{{ course.name }} · {{ units.count }} unit{{ units.count|pluralize }}</p>
+  </div>
+  {% if can_add %}
+  <a href="{% url 'staff:course_unit_create' course.pk %}" class="btn btn-primary">Add Unit</a>
+  {% endif %}
+</div>
+
+<div class="nay-table-wrapper">
+  {% if units %}
+  <table class="nay-table">
+    <thead>
+      <tr><th>Code</th><th>Unit Name</th><th>Description</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for u in units %}
+      <tr>
+        <td style="font-family: monospace; font-size: 0.8125rem; font-weight: 600; color: var(--nay-blue-mid);">{{ u.code }}</td>
+        <td style="font-weight: 500;">{{ u.name }}</td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ u.description|truncatechars:60|default:"—" }}</td>
+        <td><span class="badge-status status-{% if u.is_active %}success{% else %}secondary{% endif %}">{% if u.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+        <td>
+          {% if can_edit %}
+          <a href="{% url 'staff:course_unit_edit' course.pk u.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-title">No units configured</div>
+    <div class="empty-state-desc">No course units have been added to {{ course.code }} yet.
+      {% if can_add %}<a href="{% url 'staff:course_unit_create' course.pk %}">Add the first unit.</a>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "student/base_student.html" %}
+{% block title %}Invoice {{ invoice.invoice_number }} – {{ college.short_name }}{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'student:fees' %}">Fees &amp; Payments</a></li>
+<li class="breadcrumb-item active">{{ invoice.invoice_number }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Invoice {{ invoice.invoice_number }}</h1>
+    <p class="page-subtitle">{{ invoice.period }} &middot; Issued {{ invoice.issue_date }}</p>
+  </div>
+  <span class="badge-status status-{{ invoice.status_class }}" style="align-self: center;">{{ invoice.status }}</span>
+</div>
+
+{% if not invoice %}
+<div class="nay-card">
+  <div class="empty-state">
+    <div class="empty-state-title">Invoice not found</div>
+    <div class="empty-state-desc">This invoice does not exist or you do not have access to it.</div>
+  </div>
+</div>
+{% else %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Invoice Items</span></div>
+      <table class="nay-table" style="border: 1px solid var(--nay-border); border-radius: var(--radius); overflow: hidden;">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th style="text-align:right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in invoice.items %}
+          <tr>
+            <td>{{ item.description }}</td>
+            <td style="text-align:right">{{ college.currency_symbol }} {{ item.amount|floatformat:"0" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr style="border-top: 2px solid var(--nay-border);">
+            <td style="font-weight: 700; padding: 0.75rem 1rem;">Total</td>
+            <td style="text-align:right; font-weight: 700; padding: 0.75rem 1rem;">{{ college.currency_symbol }} {{ invoice.total|floatformat:"0" }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    {% if invoice_payments %}
+    <div class="nay-table-wrapper">
+      <div class="nay-table-header"><span style="font-weight: 600;">Payments Against This Invoice</span></div>
+      <table class="nay-table">
+        <thead>
+          <tr><th>Receipt No.</th><th>Date</th><th>Method</th><th>Reference</th><th style="text-align:right">Amount</th></tr>
+        </thead>
+        <tbody>
+          {% for p in invoice_payments %}
+          <tr>
+            <td style="font-family: monospace; font-size: 0.8125rem;">
+              <a href="{% url 'student:receipt' p.receipt_number %}">{{ p.receipt_number }}</a>
+            </td>
+            <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ p.date }}</td>
+            <td>{{ p.method }}</td>
+            <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ p.reference }}</td>
+            <td style="text-align:right; font-weight: 600; color: var(--nay-success);">{{ college.currency_symbol }} {{ p.amount|floatformat:"0" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Summary</span></div>
+      <div style="font-size: 0.875rem; display: grid; gap: 0.75rem;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--nay-text-muted);">Invoice Total</span>
+          <span style="font-weight: 600;">{{ college.currency_symbol }} {{ invoice.total|floatformat:"0" }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--nay-text-muted);">Amount Paid</span>
+          <span style="font-weight: 600; color: var(--nay-success);">{{ college.currency_symbol }} {{ invoice.paid|floatformat:"0" }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-top: 0.75rem; border-top: 2px solid var(--nay-border);">
+          <span style="font-weight: 700;">Balance Due</span>
+          <span style="font-weight: 700; font-size: 1.125rem; color: {% if invoice.balance > 0 %}var(--nay-warning){% else %}var(--nay-success){% endif %};">
+            {{ college.currency_symbol }} {{ invoice.balance|floatformat:"0" }}
+          </span>
+        </div>
+      </div>
+      <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--nay-border-soft);">
+        <div class="detail-grid">
+          <span class="detail-label">Due Date</span><span>{{ invoice.due_date }}</span>
+          <span class="detail-label">Status</span><span><span class="badge-status status-{{ invoice.status_class }}">{{ invoice.status }}</span></span>
+        </div>
+      </div>
+      {% if invoice.balance > 0 %}
+      <div style="margin-top: 1.25rem;">
+        <a href="{% url 'student:fees' %}" class="btn btn-primary" style="width: 100%; justify-content: center;">Make Payment</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

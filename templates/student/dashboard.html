@@ -1,0 +1,145 @@
+{% extends "student/base_student.html" %}
+{% block title %}Dashboard – {{ college.short_name }}{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Dashboard</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Welcome back, {{ student.user.first_name }}</h1>
+    <p class="page-subtitle">{{ student.admission_number }}</p>
+  </div>
+</div>
+
+{# ---- Current enrolment banner ---- #}
+{% if current_enrollment %}
+<div style="background: var(--nay-blue-light); border: 1px solid var(--nay-border); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
+    <div>
+      <p style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--nay-text-muted); margin-bottom: 0.25rem;">Current Enrolment</p>
+      <p style="font-size: 1rem; font-weight: 700; color: var(--nay-blue); margin-bottom: 0.25rem;">{{ current_enrollment.course.name }}</p>
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin: 0;">{{ current_enrollment.academic_period.name }}</p>
+    </div>
+    <span class="badge-status status-{% if current_enrollment.status == 'ACTIVE' %}success{% elif current_enrollment.status == 'PENDING' %}warning{% else %}secondary{% endif %}">
+      {{ current_enrollment.get_status_display }}
+    </span>
+  </div>
+</div>
+{% else %}
+<div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;">
+  <p style="margin: 0; font-size: 0.875rem; color: #92400e;">You have no active enrolment at this time. Contact the Registrar's office for assistance.</p>
+</div>
+{% endif %}
+
+<div class="row g-4">
+
+  {# ---- My Course ---- #}
+  {% if current_enrollment %}
+  <div class="col-md-6">
+    <div class="nay-card">
+      <div class="nay-card-header">
+        <span class="nay-card-title">My Course</span>
+        <a href="{% url 'student:course' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">View details</a>
+      </div>
+      <div class="detail-grid" style="font-size: 0.875rem;">
+        <span class="detail-label">Programme</span><span>{{ current_enrollment.course.name }}</span>
+        <span class="detail-label">Code</span><span style="font-family: monospace;">{{ current_enrollment.course.code }}</span>
+        <span class="detail-label">Duration</span><span>{{ current_enrollment.course.duration }}</span>
+        <span class="detail-label">Period</span><span>{{ current_enrollment.academic_period.name }}</span>
+        <span class="detail-label">Enrolled</span><span>{{ current_enrollment.enrolled_at|date:"d M Y" }}</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ---- Enrolment history ---- #}
+  <div class="col-md-6">
+    <div class="nay-card">
+      <div class="nay-card-header">
+        <span class="nay-card-title">Enrolment History</span>
+        <a href="{% url 'student:enrollments' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">View all</a>
+      </div>
+      {% if recent_enrollments %}
+      {% for e in recent_enrollments %}
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--nay-border-soft); font-size: 0.875rem; {% if forloop.last %}border-bottom: none;{% endif %}">
+        <div>
+          <div style="font-weight: 500;">{{ e.course.code }}</div>
+          <div style="font-size: 0.75rem; color: var(--nay-text-muted);">{{ e.academic_period.name }}</div>
+        </div>
+        <span class="badge-status status-{% if e.status == 'ACTIVE' %}success{% elif e.status == 'PENDING' %}warning{% elif e.status == 'COMPLETED' %}info{% else %}secondary{% endif %}">{{ e.get_status_display }}</span>
+      </div>
+      {% endfor %}
+      {% else %}
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin: 0.5rem 0 0;">No enrolment records found.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ---- Recent Results ---- #}
+  <div class="col-md-6">
+    <div class="nay-card">
+      <div class="nay-card-header">
+        <span class="nay-card-title">Recent Results</span>
+        <a href="{% url 'student:results' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">View all</a>
+      </div>
+      {% if recent_results %}
+      <table style="width: 100%; font-size: 0.875rem; border-collapse: collapse;">
+        <tbody>
+          {% for r in recent_results %}
+          <tr style="border-bottom: 1px solid var(--nay-border-soft);">
+            <td style="padding: 0.5rem 0; font-family: monospace; color: var(--nay-blue-mid); width: 80px;">{{ r.course_unit.code }}</td>
+            <td style="padding: 0.5rem 0.5rem; color: var(--nay-text-muted); font-size: 0.8125rem;">{{ r.course_unit.name }}</td>
+            <td style="padding: 0.5rem 0; text-align: right; font-weight: 700; font-size: 1.125rem; color: var(--nay-blue-mid);">{{ r.grade|default:"—" }}</td>
+            <td style="padding: 0.5rem 0 0.5rem 0.5rem; text-align: right; color: var(--nay-text-muted); font-size: 0.8125rem; white-space: nowrap;">{{ r.total|default:"—" }}/100</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin: 0.5rem 0 0;">No published results yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ---- Recent Content ---- #}
+  <div class="col-md-6">
+    <div class="nay-card">
+      <div class="nay-card-header">
+        <span class="nay-card-title">Recent Course Content</span>
+        <a href="{% url 'student:content' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">View all</a>
+      </div>
+      {% if recent_content %}
+      {% for item in recent_content %}
+      <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--nay-border-soft); {% if forloop.last %}border-bottom: none;{% endif %} display: flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 0.7rem; font-weight: 600; background: var(--nay-blue-light); color: var(--nay-blue); padding: 2px 6px; border-radius: 4px; flex-shrink: 0; white-space: nowrap;">
+          {{ item.get_content_type_display }}
+        </span>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: 0.875rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.title }}</div>
+          <div style="font-size: 0.75rem; color: var(--nay-text-muted);">{{ item.course.code }}{% if item.course_unit %} · {{ item.course_unit.code }}{% endif %}</div>
+        </div>
+        {% if item.file %}
+        <a href="{{ item.file.url }}" target="_blank" style="font-size: 0.75rem; color: var(--nay-blue-mid); white-space: nowrap; flex-shrink: 0;">Download</a>
+        {% elif item.url %}
+        <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" style="font-size: 0.75rem; color: var(--nay-blue-mid); white-space: nowrap; flex-shrink: 0;">Open</a>
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% else %}
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin: 0.5rem 0 0;">No course materials uploaded yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ---- Finance placeholder ---- #}
+  <div class="col-md-6">
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Finance</span></div>
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin: 0.5rem 0 0;">Fee statements and payment records will be available here once the Finance module is implemented.</p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

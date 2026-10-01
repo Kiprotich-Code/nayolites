@@ -1,0 +1,73 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Enrollment – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:enrollments' %}">Enrollments</a></li>
+<li class="breadcrumb-item active">{{ enrollment.student.user.get_full_name }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ enrollment.student.user.get_full_name }}</h1>
+    <p class="page-subtitle">{{ enrollment.course.code }} · {{ enrollment.academic_period.name }}</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+    <span class="badge-status status-{% if enrollment.status == 'ACTIVE' %}success{% elif enrollment.status == 'PENDING' %}warning{% elif enrollment.status == 'COMPLETED' %}info{% else %}secondary{% endif %}">
+      {{ enrollment.get_status_display }}
+    </span>
+    {% if can_change_status or can_approve %}
+    <a href="{% url 'staff:enrollment_status' enrollment.pk %}" class="btn btn-secondary btn-sm">Change Status</a>
+    {% endif %}
+    {% if can_approve and enrollment.status == 'PENDING' %}
+    <form method="post" action="{% url 'staff:enrollment_status' enrollment.pk %}" style="margin: 0;">
+      {% csrf_token %}
+      <input type="hidden" name="new_status" value="ACTIVE">
+      <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this enrollment?')">Approve</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Enrollment Details</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Student</span><span><a href="{% url 'staff:student_detail' enrollment.student.pk %}">{{ enrollment.student.user.get_full_name }}</a></span>
+        <span class="detail-label">Admission No.</span><span style="font-family: monospace; font-size: 0.875rem;">{{ enrollment.student.admission_number }}</span>
+        <span class="detail-label">Course</span><span><a href="{% url 'staff:course_detail' enrollment.course.pk %}">{{ enrollment.course.code }} — {{ enrollment.course.name }}</a></span>
+        <span class="detail-label">Period</span><span>{{ enrollment.academic_period.name }}</span>
+        <span class="detail-label">Status</span>
+        <span><span class="badge-status status-{% if enrollment.status == 'ACTIVE' %}success{% elif enrollment.status == 'PENDING' %}warning{% elif enrollment.status == 'COMPLETED' %}info{% else %}secondary{% endif %}">{{ enrollment.get_status_display }}</span></span>
+        <span class="detail-label">Enrolled</span><span>{{ enrollment.enrolled_at|date:"d M Y, H:i" }}</span>
+        {% if enrollment.completed_at %}
+        <span class="detail-label">Completed</span><span>{{ enrollment.completed_at|date:"d M Y" }}</span>
+        {% endif %}
+        {% if enrollment.withdrawn_at %}
+        <span class="detail-label">Withdrawn</span><span>{{ enrollment.withdrawn_at|date:"d M Y" }}</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if enrollment.notes %}
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Notes</span></div>
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); white-space: pre-wrap; margin: 0; padding-top: 0.25rem;">{{ enrollment.notes }}</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-7">
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Future Extension Points</span></div>
+      <div style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.8; padding-top: 0.25rem;">
+        <div>Finance — Invoice and payment records will appear here when the Finance module is implemented.</div>
+        <div>Results — Academic results for this enrollment will appear here when the Results module is implemented.</div>
+        <div>Attendance — Attendance records will appear here when Attendance is implemented.</div>
+        <div>Content — Course content access will be managed here when Content is implemented.</div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

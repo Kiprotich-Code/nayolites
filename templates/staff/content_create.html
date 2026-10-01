@@ -1,0 +1,84 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Upload Content – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:content' %}">Content</a></li>
+<li class="breadcrumb-item active">Upload Content</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Upload Content</h1>
+    <p class="page-subtitle">Add a file or link for a course unit.</p>
+  </div>
+</div>
+
+<div style="max-width: 680px;">
+  <div class="form-section">
+    <div class="form-section-title">Content Details</div>
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Title <span style="color: var(--nay-danger);">*</span></label>
+        <input type="text" class="form-control" placeholder="e.g. Week 3 – Object-Oriented Programming">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Course <span style="color: var(--nay-danger);">*</span></label>
+        <select class="form-select">
+          <option>— Select course —</option>
+          {% for c in courses %}<option>{{ c.name }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Course Unit <span style="color: var(--nay-danger);">*</span></label>
+        <select class="form-select">
+          <option>— Select unit —</option>
+          <option>DCS 201 – Software Engineering</option>
+          <option>DCS 202 – Web Application Development</option>
+          <option>DCS 203 – Computer Networks</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Content Type <span style="color: var(--nay-danger);">*</span></label>
+        <select class="form-select">
+          <option>PDF Document</option>
+          <option>Video URL</option>
+          <option>External Link</option>
+          <option>Other File</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Visibility</label>
+        <select class="form-select">
+          <option>Enrolled Students</option>
+          <option>All Students</option>
+          <option>Staff Only</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">File Upload</label>
+        <div style="border: 2px dashed var(--nay-border); border-radius: var(--radius); padding: 2rem; text-align: center; background: var(--nay-bg);">
+          <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin-bottom: 0.75rem;">Drag and drop a file here, or click to browse</p>
+          <input type="file" style="display: none;" id="file-upload">
+          <label for="file-upload" class="btn btn-secondary" style="cursor: pointer;">Choose File</label>
+          <p style="font-size: 0.75rem; color: var(--nay-text-muted); margin-top: 0.75rem; margin-bottom: 0;">PDF, DOC, PPTX, MP4 – max 50 MB</p>
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Or enter a URL</label>
+        <input type="url" class="form-control" placeholder="https://…">
+        <p class="form-text">Paste a YouTube link, Google Drive link, or any public URL.</p>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" rows="3" placeholder="Optional description or notes for students…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 0.75rem;">
+    <button class="btn btn-primary">Upload Content</button>
+    <a href="{% url 'staff:content' %}" class="btn btn-secondary">Cancel</a>
+  </div>
+</div>
+{% endblock %}

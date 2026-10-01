@@ -1,0 +1,44 @@
+{% extends "components/base_public.html" %}
+{% block title %}Application Received – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<section class="public-section">
+  <div class="public-container" style="max-width: 640px; margin: 0 auto; text-align: center; padding: 4rem 1rem;">
+
+    <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--nay-success-light, #dcfce7); color: var(--nay-success, #16a34a); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.75rem;">✓</div>
+
+    <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--nay-text);">Application Received</h1>
+    <p style="font-size: 1rem; color: var(--nay-text-muted); line-height: 1.7; margin-bottom: 2rem;">
+      Thank you, {{ application.first_name }}. Your application for <strong>{{ course.name }}</strong> has been received.
+      Our admissions team will review your application and contact you within five working days.
+    </p>
+
+    <div style="background: var(--nay-blue-light); border: 1px solid var(--nay-border); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; text-align: left;">
+      <p style="font-size: 0.8125rem; font-weight: 600; color: var(--nay-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem;">Your Reference Number</p>
+      <p style="font-size: 1.5rem; font-weight: 800; font-family: monospace; color: var(--nay-blue); margin: 0;">{{ application.reference_number }}</p>
+      <p style="font-size: 0.8125rem; color: var(--nay-text-muted); margin-top: 0.5rem; margin-bottom: 0;">Please keep this reference number for your records. You may need it when contacting our admissions office.</p>
+    </div>
+
+    <div style="text-align: left; background: #fff; border: 1px solid var(--nay-border); border-radius: 8px; padding: 1.25rem; margin-bottom: 2rem;">
+      <p style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.75rem;">Application Summary</p>
+      <div style="font-size: 0.875rem; color: var(--nay-text-muted); display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 1rem;">
+        <span style="font-weight: 500; color: var(--nay-text);">Name:</span><span>{{ application.get_full_name }}</span>
+        <span style="font-weight: 500; color: var(--nay-text);">Email:</span><span>{{ application.email }}</span>
+        <span style="font-weight: 500; color: var(--nay-text);">Programme:</span><span>{{ course.name }}</span>
+        {% if application.preferred_period %}
+        <span style="font-weight: 500; color: var(--nay-text);">Preferred Intake:</span><span>{{ application.preferred_period.name }}</span>
+        {% endif %}
+        <span style="font-weight: 500; color: var(--nay-text);">Submitted:</span><span>{{ application.created_at|date:"d M Y, H:i" }}</span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href="{% url 'courses:list' %}" class="btn btn-secondary">Browse More Programmes</a>
+      <a href="{% url 'public:contact' %}" class="btn btn-secondary">Contact Us</a>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

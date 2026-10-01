@@ -1,0 +1,128 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Audit Log – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Audit Log</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Audit Log</h1>
+    <p class="page-subtitle">
+      Record of all significant authentication and administrative events.
+      Entries are immutable.
+    </p>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="nay-table-wrapper" style="margin-bottom:1.5rem;">
+  <form method="get" style="padding:1rem 1.25rem;display:flex;flex-wrap:wrap;gap:0.75rem;align-items:flex-end;">
+    <div>
+      <label style="display:block;font-size:0.8125rem;font-weight:500;margin-bottom:0.25rem;">Actor / keyword</label>
+      <input type="text" name="actor" value="{{ actor_filter }}" class="form-control"
+             placeholder="Name, email, or description…" style="width:220px;">
+    </div>
+    <div>
+      <label style="display:block;font-size:0.8125rem;font-weight:500;margin-bottom:0.25rem;">Action</label>
+      <select name="action" class="form-select" style="width:200px;">
+        <option value="">All Actions</option>
+        {% for value, label in action_choices %}
+        <option value="{{ value }}"{% if action_filter == value %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label style="display:block;font-size:0.8125rem;font-weight:500;margin-bottom:0.25rem;">Date from</label>
+      <input type="date" name="date_from" value="{{ date_from }}" class="form-control" style="width:160px;">
+    </div>
+    <div>
+      <label style="display:block;font-size:0.8125rem;font-weight:500;margin-bottom:0.25rem;">Date to</label>
+      <input type="date" name="date_to" value="{{ date_to }}" class="form-control" style="width:160px;">
+    </div>
+    <div style="display:flex;gap:0.5rem;">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="{% url 'staff:audit_log' %}" class="btn btn-secondary">Reset</a>
+    </div>
+  </form>
+</div>
+
+<!-- Results table -->
+<div class="nay-table-wrapper">
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th style="white-space:nowrap;">Timestamp</th>
+        <th>Actor</th>
+        <th>Action</th>
+        <th>Object</th>
+        <th>Description</th>
+        <th>IP Address</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in page_obj %}
+      <tr>
+        <td style="font-size:0.8125rem;color:var(--nay-text-muted);white-space:nowrap;">
+          {{ entry.created_at|date:"d M Y H:i" }}
+        </td>
+        <td style="font-weight:500;font-size:0.875rem;">
+          {% if entry.actor %}
+            {{ entry.actor.get_full_name }}
+          {% else %}
+            <span style="color:var(--nay-text-muted);">—</span>
+          {% endif %}
+        </td>
+        <td>
+          <span style="font-size:0.8125rem;background:var(--nay-blue-light);color:var(--nay-blue-mid);padding:2px 8px;border-radius:4px;">
+            {{ entry.get_action_display }}
+          </span>
+        </td>
+        <td style="font-size:0.8125rem;color:var(--nay-text-muted);">
+          {% if entry.model_name %}{{ entry.model_name }}{% if entry.object_id %} #{{ entry.object_id }}{% endif %}{% else %}—{% endif %}
+        </td>
+        <td style="font-size:0.8125rem;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+          {{ entry.description|default:"—" }}
+        </td>
+        <td style="font-family:monospace;font-size:0.8125rem;color:var(--nay-text-muted);">
+          {{ entry.ip_address|default:"—" }}
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="text-align:center;color:var(--nay-text-muted);padding:2rem 0;">
+          No audit log entries match the current filters.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="nay-table-footer">
+    <span>
+      {% if page_obj.paginator.count %}
+        Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }} entries
+      {% else %}
+        0 entries
+      {% endif %}
+    </span>
+    {% if page_obj.has_other_pages %}
+    <div style="display:flex;gap:0.25rem;align-items:center;">
+      {% if page_obj.has_previous %}
+        <a href="?{% if action_filter %}action={{ action_filter }}&{% endif %}{% if actor_filter %}actor={{ actor_filter }}&{% endif %}{% if date_from %}date_from={{ date_from }}&{% endif %}{% if date_to %}date_to={{ date_to }}&{% endif %}page={{ page_obj.previous_page_number }}"
+           class="btn btn-sm btn-secondary">&laquo; Prev</a>
+      {% endif %}
+      <span style="font-size:0.8125rem;padding:0 0.5rem;">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+      {% if page_obj.has_next %}
+        <a href="?{% if action_filter %}action={{ action_filter }}&{% endif %}{% if actor_filter %}actor={{ actor_filter }}&{% endif %}{% if date_from %}date_from={{ date_from }}&{% endif %}{% if date_to %}date_to={{ date_to }}&{% endif %}page={{ page_obj.next_page_number }}"
+           class="btn btn-sm btn-secondary">Next &raquo;</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

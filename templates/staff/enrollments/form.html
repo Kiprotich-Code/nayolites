@@ -1,0 +1,55 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Enroll Student – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:enrollments' %}">Enrollments</a></li>
+<li class="breadcrumb-item active">Enroll Student</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Enroll Student</h1>
+</div>
+
+<div style="max-width: 580px;">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="nay-alert nay-alert-danger mb-3">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="nay-card" style="margin-bottom: 1.5rem;">
+      <div class="row g-3" style="padding-top: 0.25rem;">
+        <div class="col-12">
+          <label class="form-label">Student *</label>
+          {{ form.student.as_widget }}
+          <div class="form-text">Only active students are shown.</div>
+          {% if form.student.errors %}<div class="form-text text-danger">{{ form.student.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Course *</label>
+          {{ form.course.as_widget }}
+          {% if form.course.errors %}<div class="form-text text-danger">{{ form.course.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Academic Period *</label>
+          {{ form.academic_period.as_widget }}
+          {% if form.academic_period.errors %}<div class="form-text text-danger">{{ form.academic_period.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Initial Status *</label>
+          {{ form.initial_status.as_widget }}
+          {% if form.initial_status.errors %}<div class="form-text text-danger">{{ form.initial_status.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Notes (optional)</label>
+          {{ form.notes.as_widget }}
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn btn-primary">Create Enrollment</button>
+      <a href="{% url 'staff:enrollments' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

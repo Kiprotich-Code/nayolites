@@ -1,0 +1,44 @@
+{% extends "student/base_student.html" %}
+{% block title %}My Enrollments – {{ college.short_name }}{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Enrollments</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">My Enrolments</h1>
+</div>
+
+{% if enrollments %}
+<div class="nay-table-wrapper">
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Academic Period</th>
+        <th>Programme</th>
+        <th>Status</th>
+        <th>Enrolled</th>
+        {% if enrollments.0.completed_at %}<th>Completed</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in enrollments %}
+      <tr>
+        <td style="font-weight: 600;">{{ e.academic_period.name }}</td>
+        <td>{{ e.course.code }} — {{ e.course.name }}</td>
+        <td><span class="badge-status status-{% if e.status == 'ACTIVE' %}success{% elif e.status == 'PENDING' %}warning{% elif e.status == 'COMPLETED' %}info{% else %}secondary{% endif %}">{{ e.get_status_display }}</span></td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ e.enrolled_at|date:"d M Y" }}</td>
+        {% if e.completed_at %}<td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ e.completed_at|date:"d M Y" }}</td>{% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-title">No enrolment records</div>
+  <div class="empty-state-desc">No enrolment records are on file for your account. Contact the Registrar's office for assistance.</div>
+</div>
+{% endif %}
+{% endblock %}

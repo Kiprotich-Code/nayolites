@@ -1,0 +1,102 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ course.name }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:courses' %}">Courses</a></li>
+<li class="breadcrumb-item active">{{ course.code }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ course.name }}</h1>
+    <p class="page-subtitle" style="font-family: monospace;">{{ course.code }}</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <span class="badge-status status-{% if course.is_active %}success{% else %}secondary{% endif %}">
+      {% if course.is_active %}Active{% else %}Inactive{% endif %}
+    </span>
+    {% if can_edit %}
+    <a href="{% url 'staff:course_edit' course.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+    {% endif %}
+    {% if can_activate %}
+    <form method="post" action="{% url 'staff:course_activate' course.pk %}" style="margin: 0;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm btn-secondary"
+        onclick="return confirm('{% if course.is_active %}Deactivate this course? It will be hidden from public catalogue and cannot accept new enrollments.{% else %}Activate this course?{% endif %}')">
+        {% if course.is_active %}Deactivate{% else %}Activate{% endif %}
+      </button>
+    </form>
+    {% endif %}
+    {% if can_add_unit %}
+    <a href="{% url 'staff:course_unit_create' course.pk %}" class="btn btn-primary btn-sm">Add Unit</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Course Details</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Code</span><span style="font-family: monospace; font-weight: 600;">{{ course.code }}</span>
+        <span class="detail-label">Duration</span><span>{{ course.duration }}</span>
+        <span class="detail-label">Units</span><span>{{ course.unit_count }}</span>
+        <span class="detail-label">Enrollments</span><span>{{ course.annotated_enrollment_count }}</span>
+        <span class="detail-label">Public URL</span><span style="font-size: 0.8125rem;"><a href="{% url 'courses:detail' course.slug %}" target="_blank">/courses/{{ course.slug }}/</a></span>
+      </div>
+    </div>
+    {% if course.description %}
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Description</span></div>
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.6; margin: 0; padding-top: 0.25rem;">{{ course.description }}</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-8">
+    <div class="nay-table-wrapper">
+      <div class="nay-table-header">
+        <span style="font-weight: 600;">Course Units ({{ units.count }})</span>
+        {% if can_add_unit %}
+        <a href="{% url 'staff:course_unit_create' course.pk %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">+ Add Unit</a>
+        {% endif %}
+      </div>
+      {% if units %}
+      <table class="nay-table">
+        <thead>
+          <tr><th>Code</th><th>Unit Name</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for u in units %}
+          <tr>
+            <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-blue-mid);">{{ u.code }}</td>
+            <td style="font-weight: 500;">{{ u.name }}</td>
+            <td><span class="badge-status status-{% if u.is_active %}success{% else %}secondary{% endif %}">{% if u.is_active %}Active{% else %}Inactive{% endif %}</span></td>
+            <td>
+              {% if can_edit %}
+              <a href="{% url 'staff:course_unit_edit' course.pk u.pk %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">Edit</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state-desc">No course units have been added yet.
+          {% if can_add_unit %}<a href="{% url 'staff:course_unit_create' course.pk %}">Add the first unit.</a>{% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="nay-card" style="margin-top: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Future Extension Points</span></div>
+      <div style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.7; padding-top: 0.25rem;">
+        Fee structures, enrollment details, results summary, and course content will appear here when those modules are implemented.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

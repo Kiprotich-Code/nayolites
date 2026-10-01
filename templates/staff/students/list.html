@@ -1,0 +1,119 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Students – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Students</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Students</h1>
+    <p class="page-subtitle">{{ total }} student record{{ total|pluralize }}</p>
+  </div>
+  {% if can_add %}
+  <a href="{% url 'staff:student_create' %}" class="btn btn-primary">Add Student</a>
+  {% endif %}
+</div>
+
+<div class="nay-table-wrapper">
+  <div class="nay-table-header">
+    <form method="get" style="display: flex; gap: 0.75rem; flex: 1; flex-wrap: wrap;">
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search name, admission number, email…" style="max-width: 300px;">
+      <select name="status" class="form-select" style="max-width: 160px;">
+        <option value="">All Statuses</option>
+        {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <select name="course" class="form-select" style="max-width: 220px;">
+        <option value="">All Courses</option>
+        {% for c in courses %}
+        <option value="{{ c.pk }}" {% if course_filter == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.code }} — {{ c.name }}</option>
+        {% endfor %}
+      </select>
+      <select name="period" class="form-select" style="max-width: 200px;">
+        <option value="">All Periods</option>
+        {% for p in periods %}
+        <option value="{{ p.pk }}" {% if period_filter == p.pk|stringformat:"s" %}selected{% endif %}>{{ p.name }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-secondary">Filter</button>
+      {% if q or status_filter or course_filter or period_filter %}
+      <a href="{% url 'staff:students' %}" class="btn btn-secondary">Clear</a>
+      {% endif %}
+    </form>
+    <span style="font-size: 0.8125rem; color: var(--nay-text-muted); white-space: nowrap;">{{ total }} record{{ total|pluralize }}</span>
+  </div>
+
+  {% if page_obj.object_list %}
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Admission No.</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>County</th>
+        <th>Status</th>
+        <th>Registered</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in page_obj %}
+      <tr>
+        <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.admission_number }}</td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 0.625rem;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--nay-blue-light); color: var(--nay-blue); display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700; flex-shrink: 0;">{{ s.user.first_name|slice:":1" }}{{ s.user.last_name|slice:":1" }}</div>
+            <span style="font-weight: 500;">{{ s.user.get_full_name }}</span>
+          </div>
+        </td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.user.email }}</td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.county|default:"—" }}</td>
+        <td>
+          <span class="badge-status status-{% if s.status == 'ACTIVE' %}success{% elif s.status == 'SUSPENDED' %}warning{% elif s.status == 'GRADUATED' %}info{% else %}secondary{% endif %}">
+            {{ s.get_status_display }}
+          </span>
+        </td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.created_at|date:"d M Y" }}</td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'staff:student_detail' s.pk %}" class="btn btn-sm btn-secondary">View</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="nay-table-footer">
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} · {{ total }} record{{ total|pluralize }}</span>
+    <div style="display: flex; gap: 0.25rem;">
+      {% if page_obj.has_previous %}
+      <a href="?{% if q %}q={{ q }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-secondary">Previous</a>
+      {% else %}
+      <button class="btn btn-sm btn-secondary" disabled>Previous</button>
+      {% endif %}
+      {% if page_obj.has_next %}
+      <a href="?{% if q %}q={{ q }}&{% endif %}{% if status_filter %}status={{ status_filter }}&{% endif %}page={{ page_obj.next_page_number }}" class="btn btn-sm btn-secondary">Next</a>
+      {% else %}
+      <button class="btn btn-sm btn-secondary" disabled>Next</button>
+      {% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-title">No students found</div>
+    <div class="empty-state-desc">
+      {% if q or status_filter or course_filter or period_filter %}
+      No student records match the current filters.
+      <a href="{% url 'staff:students' %}">Clear filters</a>
+      {% else %}
+      No student records have been created yet.
+      {% if can_add %}<a href="{% url 'staff:student_create' %}">Add the first student.</a>{% endif %}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

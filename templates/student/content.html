@@ -1,0 +1,53 @@
+{% extends "student/base_student.html" %}
+{% block title %}Course Content – {{ college.short_name }}{% endblock %}
+{% block breadcrumbs %}<li class="breadcrumb-item active">Course Content</li>{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Course Content</h1>
+  {% if has_content %}
+  <p class="page-subtitle">{{ total_items }} item{{ total_items|pluralize }} available</p>
+  {% endif %}
+</div>
+
+{% if has_content %}
+{% for course_name, units in content_by_course.items %}
+<div style="margin-bottom: 2rem;">
+  <h2 style="font-size: 1rem; font-weight: 700; color: var(--nay-blue); margin-bottom: 1rem;
+              padding-bottom: 0.5rem; border-bottom: 2px solid var(--nay-blue-light);">
+    {{ course_name }}
+  </h2>
+  {% for unit_label, items in units.items %}
+  <div style="margin-bottom: 1.25rem;">
+    <p style="font-size: 0.8125rem; font-weight: 600; text-transform: uppercase;
+              letter-spacing: 0.06em; color: var(--nay-text-muted); margin-bottom: 0.5rem;">
+      {{ unit_label }}
+    </p>
+    <div style="border: 1px solid var(--nay-border); border-radius: var(--radius); overflow: hidden;">
+      {% for item in items %}
+      <div style="padding: 0.875rem 1rem; border-bottom: 1px solid var(--nay-border-soft); display: flex; align-items: center; gap: 1rem; {% if forloop.last %}border-bottom: none;{% endif %}">
+        <span style="font-size: 0.75rem; font-weight: 600; background: var(--nay-blue-light); color: var(--nay-blue);
+                     padding: 2px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;">
+          {{ item.get_content_type_display }}
+        </span>
+        <span style="font-size: 0.875rem; font-weight: 500; flex: 1;">{{ item.title }}</span>
+        {% if item.file %}
+        <a href="{{ item.file.url }}" target="_blank" class="btn btn-sm btn-secondary" style="white-space: nowrap;">Download</a>
+        {% elif item.url %}
+        <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-secondary" style="white-space: nowrap;">Open</a>
+        {% endif %}
+        <span style="font-size: 0.75rem; color: var(--nay-text-muted); white-space: nowrap;">{{ item.created_at|date:"d M Y" }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-title">No content available</div>
+  <div class="empty-state-desc">No course materials have been uploaded for your enrolled courses yet. Check back after your lecturer uploads content.</div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Staff Members – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Staff Members</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Staff Members</h1>
+    <p class="page-subtitle">{{ total }} staff account{{ total|pluralize }}.</p>
+  </div>
+  {% if perms.accounts.add_user %}
+  <a href="{% url 'staff:user_create' %}" class="btn btn-primary">Add Staff Member</a>
+  {% endif %}
+</div>
+
+{# Search bar #}
+<form method="get" class="nay-table-wrapper" style="padding: 1rem; margin-bottom: 1.25rem;">
+  <div style="display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 220px;">
+      <label style="font-size: 0.8125rem; font-weight: 600; display: block; margin-bottom: 0.25rem;">Search</label>
+      <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm"
+             placeholder="Name, email, staff no., or department…">
+    </div>
+    <div>
+      <button type="submit" class="btn btn-sm btn-primary">Search</button>
+      {% if q %}
+      <a href="{% url 'staff:staff_list' %}" class="btn btn-sm btn-secondary" style="margin-left: 0.25rem;">Clear</a>
+      {% endif %}
+    </div>
+  </div>
+</form>
+
+<div class="nay-table-wrapper">
+  {% if staff_members %}
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Staff No.</th>
+        <th>Job Title</th>
+        <th>Department</th>
+        <th>Groups</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for member in staff_members %}
+      <tr>
+        <td>
+          <div style="display: flex; align-items: center; gap: 0.625rem;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--nay-blue-light); color: var(--nay-blue); display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700; flex-shrink: 0;">
+              {{ member.first_name|slice:":1" }}{{ member.last_name|slice:":1" }}
+            </div>
+            <span style="font-weight: 500;">{{ member.get_full_name }}</span>
+          </div>
+        </td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ member.email }}</td>
+        <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">
+          {{ member.staffprofile.staff_number|default:"—" }}
+        </td>
+        <td style="font-size: 0.875rem;">{{ member.staffprofile.job_title|default:"—" }}</td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ member.staffprofile.department|default:"—" }}</td>
+        <td>
+          {% for g in member.groups.all %}
+          <span style="font-size: 0.75rem; background: var(--nay-blue-light); color: var(--nay-blue-mid); padding: 2px 8px; border-radius: 4px; margin-right: 4px; display: inline-block; margin-bottom: 2px;">{{ g.name }}</span>
+          {% empty %}
+          <span style="font-size: 0.75rem; color: var(--nay-text-muted);">—</span>
+          {% endfor %}
+        </td>
+        <td>
+          {% if member.account_status == 'ACTIVE' %}
+            <span class="badge-status status-success">Active</span>
+          {% elif member.account_status == 'SUSPENDED' %}
+            <span class="badge-status status-warning">Suspended</span>
+          {% else %}
+            <span class="badge-status status-muted">Inactive</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if perms.accounts.view_user %}
+          <a href="{% url 'staff:user_detail' member.pk %}" class="btn btn-sm btn-secondary">View</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-desc">
+      {% if q %}
+        No staff members match "<strong>{{ q }}</strong>".
+        <a href="{% url 'staff:staff_list' %}">Clear search</a>
+      {% else %}
+        No staff accounts found.
+        {% if perms.accounts.add_user %}
+          <a href="{% url 'staff:user_create' %}">Add the first staff member</a>.
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  <div class="nay-table-footer">
+    <span>{{ total }} staff member{{ total|pluralize }}</span>
+  </div>
+</div>
+{% endblock %}

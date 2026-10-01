@@ -1,0 +1,111 @@
+{% extends "components/base_public.html" %}
+{% block title %}Apply — {{ course.name }} – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<div style="background: var(--nay-blue); color: #fff; padding: 2.5rem 0;">
+  <div class="public-container">
+    <p style="font-size: 0.8125rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
+      <a href="{% url 'courses:list' %}" style="color: var(--nay-accent);">Programmes</a> /
+      <a href="{% url 'courses:detail' course.slug %}" style="color: var(--nay-accent);">{{ course.name }}</a> /
+      Apply
+    </p>
+    <h1 style="font-size: 1.75rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Apply for {{ course.name }}</h1>
+    <p style="color: rgba(255,255,255,0.7); font-size: 0.9375rem;">Complete the form below to submit your application. Our admissions team will review and contact you within five working days.</p>
+  </div>
+</div>
+
+<section class="public-section">
+  <div class="public-container">
+    <div class="row g-5">
+      <div class="col-lg-7">
+
+        {% if form.non_field_errors %}
+        <div class="nay-alert nay-alert-danger" style="margin-bottom: 1.5rem;">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <div class="nay-card" style="margin-bottom: 1.25rem;">
+            <div class="nay-card-header"><span class="nay-card-title">Your Details</span></div>
+            <div class="row g-3" style="padding-top: 0.25rem;">
+              <div class="col-md-6">
+                <label class="form-label">First Name *</label>
+                {{ form.first_name.as_widget }}
+                {% if form.first_name.errors %}<div class="form-text text-danger">{{ form.first_name.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Last Name *</label>
+                {{ form.last_name.as_widget }}
+                {% if form.last_name.errors %}<div class="form-text text-danger">{{ form.last_name.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-7">
+                <label class="form-label">Email Address *</label>
+                {{ form.email.as_widget }}
+                {% if form.email.errors %}<div class="form-text text-danger">{{ form.email.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-5">
+                <label class="form-label">Phone Number</label>
+                {{ form.phone.as_widget }}
+              </div>
+            </div>
+          </div>
+
+          <div class="nay-card" style="margin-bottom: 1.25rem;">
+            <div class="nay-card-header"><span class="nay-card-title">Programme &amp; Intake</span></div>
+            <div class="row g-3" style="padding-top: 0.25rem;">
+              <div class="col-12">
+                <label class="form-label">Programme</label>
+                <input type="text" class="form-control" value="{{ course.name }} ({{ course.code }})" disabled>
+              </div>
+              {% if active_periods %}
+              <div class="col-12">
+                <label class="form-label">Preferred Intake</label>
+                {{ form.preferred_period.as_widget }}
+              </div>
+              {% endif %}
+              <div class="col-12">
+                <label class="form-label">Additional Notes</label>
+                {{ form.message.as_widget }}
+                <div class="form-text">{{ form.message.help_text }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <p style="font-size: 0.8125rem; color: var(--nay-text-muted); line-height: 1.6;">
+              By submitting this form you confirm that the information provided is accurate. Submitting an application does not guarantee admission. You will receive a reference number upon submission.
+            </p>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+        </form>
+
+      </div>
+
+      <div class="col-lg-5">
+        <div class="nay-card">
+          <div class="nay-card-header"><span class="nay-card-title">What happens next?</span></div>
+          <ol style="padding-left: 1.25rem; margin: 0; font-size: 0.875rem; color: var(--nay-text-muted); line-height: 2;">
+            <li>You submit this form and receive a reference number.</li>
+            <li>Our admissions team reviews your application within five working days.</li>
+            <li>We contact you by email or phone to confirm next steps.</li>
+            <li>If accepted, you will receive an offer letter and reporting instructions.</li>
+            <li>You report on the specified date, complete enrolment, and pay fees.</li>
+          </ol>
+          <div style="margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--nay-border-soft);">
+            <p style="font-size: 0.8125rem; color: var(--nay-text-muted); margin-bottom: 0.25rem; font-weight: 600;">Admissions Office</p>
+            <p style="font-size: 0.8125rem; color: var(--nay-text-muted); margin: 0; line-height: 1.7;">
+              {{ college.phone }}<br>
+              admissions@nayolites.ac.ke<br>
+              Monday–Friday, 8:00 AM – 5:00 PM
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

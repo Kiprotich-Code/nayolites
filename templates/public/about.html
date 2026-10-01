@@ -1,0 +1,87 @@
+{% extends "components/base_public.html" %}
+{% block title %}About Us – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<div style="background: var(--nay-blue); color: #fff; padding: 3rem 0;">
+  <div class="public-container">
+    <p style="font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--nay-accent); margin-bottom: 0.5rem;">About</p>
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">{{ college.name }}</h1>
+    <p style="color: rgba(255,255,255,0.7); font-size: 1rem; max-width: 600px;">{{ college.tagline }}</p>
+  </div>
+</div>
+
+<section class="public-section">
+  <div class="public-container">
+    <div class="row g-5">
+      <div class="col-md-8">
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Our History</h2>
+        <p style="color: var(--nay-text-muted); line-height: 1.8; font-size: 0.9375rem; margin-bottom: 2rem;">{{ history }}</p>
+
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Mission</h2>
+        <p style="color: var(--nay-text-muted); line-height: 1.8; font-size: 0.9375rem; margin-bottom: 2rem;">{{ mission }}</p>
+
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Vision</h2>
+        <p style="color: var(--nay-text-muted); line-height: 1.8; font-size: 0.9375rem; margin-bottom: 2rem;">{{ vision }}</p>
+
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Core Values</h2>
+        <div style="display: grid; gap: 1rem; margin-bottom: 2rem;">
+          {% for v in core_values %}
+          <div style="padding: 1rem 1.25rem; border-left: 3px solid var(--nay-blue-mid); background: var(--nay-surface); border-radius: 0 var(--radius) var(--radius) 0;">
+            <div style="font-weight: 600; margin-bottom: 0.25rem;">{{ v.value }}</div>
+            <div style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ v.description }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="nay-card" style="margin-bottom: 1.5rem;">
+          <div class="nay-card-header"><span class="nay-card-title">Accreditations</span></div>
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem;">
+            {% for acc in accreditations %}
+            <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--nay-border-soft); color: var(--nay-text-muted);">
+              <span style="color: var(--nay-success); margin-right: 0.5rem;">✓</span>{{ acc }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="nay-card">
+          <div class="nay-card-header"><span class="nay-card-title">Our Schools</span></div>
+          <div style="display: grid; gap: 1rem;">
+            {% for dept in departments %}
+            <div style="padding-bottom: 1rem; border-bottom: 1px solid var(--nay-border-soft);">
+              <div style="font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem;">{{ dept.name }}</div>
+              <div style="font-size: 0.8125rem; color: var(--nay-text-muted); margin-bottom: 0.5rem;">Head: {{ dept.head }}</div>
+              <div style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ dept.description }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background: var(--nay-surface); border-top: 1px solid var(--nay-border); padding: 3rem 0;">
+  <div class="public-container">
+    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 2rem;">Leadership</h2>
+    <div class="row g-3">
+      {% for person in leadership %}
+      <div class="col-md-4">
+        <div class="nay-card" style="height: 100%;">
+          <div style="width: 48px; height: 48px; background: var(--nay-blue-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; color: var(--nay-blue); margin-bottom: 1rem;">
+            {{ person.name|slice:":1" }}{{ person.name|wordcount }}
+          </div>
+          <div style="font-weight: 600; margin-bottom: 0.25rem;">{{ person.name }}</div>
+          <div style="font-size: 0.8125rem; color: var(--nay-blue-mid); font-weight: 500; margin-bottom: 0.75rem;">{{ person.title }}</div>
+          <p style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.6; margin: 0;">{{ person.bio }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

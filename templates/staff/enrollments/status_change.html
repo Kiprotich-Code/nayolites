@@ -1,0 +1,48 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Change Enrollment Status – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:enrollments' %}">Enrollments</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:enrollment_detail' enrollment.pk %}">{{ enrollment.student.user.get_full_name }}</a></li>
+<li class="breadcrumb-item active">Change Status</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Change Enrollment Status</h1>
+</div>
+
+<div style="max-width: 480px;">
+  <div class="nay-card" style="margin-bottom: 1rem;">
+    <div class="nay-card-header"><span class="nay-card-title">Enrollment</span></div>
+    <div class="detail-grid">
+      <span class="detail-label">Student</span><span>{{ enrollment.student.user.get_full_name }}</span>
+      <span class="detail-label">Course</span><span>{{ enrollment.course.code }} — {{ enrollment.course.name }}</span>
+      <span class="detail-label">Period</span><span>{{ enrollment.academic_period.name }}</span>
+      <span class="detail-label">Current Status</span>
+      <span><span class="badge-status status-{% if enrollment.status == 'ACTIVE' %}success{% elif enrollment.status == 'PENDING' %}warning{% elif enrollment.status == 'COMPLETED' %}info{% else %}secondary{% endif %}">{{ enrollment.get_status_display }}</span></span>
+    </div>
+  </div>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="nay-card" style="margin-bottom: 1.5rem;">
+      <div class="row g-3" style="padding-top: 0.25rem;">
+        <div class="col-12">
+          <label class="form-label">New Status *</label>
+          {{ form.new_status.as_widget }}
+          {% if form.new_status.errors %}<div class="form-text text-danger">{{ form.new_status.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Reason / Notes (optional)</label>
+          {{ form.notes.as_widget }}
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn btn-primary">Update Status</button>
+      <a href="{% url 'staff:enrollment_detail' enrollment.pk %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Groups &amp; Roles – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Groups &amp; Roles</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Groups &amp; Roles</h1>
+    <p class="page-subtitle">Permission groups and staff role assignments.</p>
+  </div>
+</div>
+
+<div class="nay-table-wrapper">
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Group Name</th>
+        <th>Description</th>
+        <th style="text-align:center">Members</th>
+        <th style="text-align:center">Permissions</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in group_data %}
+      <tr>
+        <td style="font-weight: 600;">
+          <a href="{% url 'staff:group_detail' item.group.pk %}" style="color: var(--nay-blue); text-decoration: none;">{{ item.group.name }}</a>
+        </td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">
+          {% if item.group.name == "Administrator" %}Full system access
+          {% elif item.group.name == "Registrar" %}Student enrollment and records
+          {% elif item.group.name == "Finance Officer" %}Invoices, payments, and fee structures
+          {% elif item.group.name == "Academic Officer" %}Results, courses, and academic periods
+          {% elif item.group.name == "Lecturer" %}Results entry and course content upload
+          {% elif item.group.name == "Receptionist" %}View-only access to student records
+          {% else %}—{% endif %}
+        </td>
+        <td style="text-align:center; font-weight: 600;">{{ item.member_count }}</td>
+        <td style="text-align:center; color: var(--nay-text-muted);">{{ item.permission_count }}</td>
+        <td>
+          <a href="{% url 'staff:group_detail' item.group.pk %}" class="btn btn-sm btn-secondary">View</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="text-align:center; color: var(--nay-text-muted); padding: 2rem 0;">
+          No groups found. Run <code>python manage.py create_initial_groups</code> to seed the default groups.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="nay-table-footer">
+    <span>{{ group_data|length }} group{{ group_data|length|pluralize }}</span>
+  </div>
+</div>
+
+<div class="nay-alert nay-alert-info" style="margin-top: 1.5rem;">
+  Groups use Django's built-in permissions system. Assign groups to users on their user detail page.
+</div>
+{% endblock %}

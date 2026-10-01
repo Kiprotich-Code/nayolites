@@ -1,0 +1,8 @@
+Django==6.1.1
+djangorestframework==3.18.1
+Pillow==10.4.0
+python-decouple==3.8
+whitenoise==6.7.0
+psycopg2-binary==2.9.11
+hypothesis==6.135.26
+requests==2.32.3

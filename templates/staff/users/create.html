@@ -1,0 +1,135 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Create Staff Account – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:users' %}">Users</a></li>
+<li class="breadcrumb-item active">Create Staff Account</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Create Staff Account</h1>
+    <p class="page-subtitle">New staff accounts require a password change on first login.</p>
+  </div>
+  <a href="{% url 'staff:users' %}" class="btn btn-secondary">Cancel</a>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="nay-card" style="margin-bottom: 1rem;">
+        <div class="nay-card-header"><span class="nay-card-title">Personal Details</span></div>
+        <div style="padding: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label class="form-label" for="id_first_name">First Name</label>
+            <input type="text" name="first_name" id="id_first_name" class="form-control{% if form.first_name.errors %} is-invalid{% endif %}" value="{{ form.first_name.value|default:'' }}" required>
+            {% for error in form.first_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+          <div>
+            <label class="form-label" for="id_last_name">Last Name</label>
+            <input type="text" name="last_name" id="id_last_name" class="form-control{% if form.last_name.errors %} is-invalid{% endif %}" value="{{ form.last_name.value|default:'' }}" required>
+            {% for error in form.last_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+          <div>
+            <label class="form-label" for="id_email">Email Address</label>
+            <input type="email" name="email" id="id_email" class="form-control{% if form.email.errors %} is-invalid{% endif %}" value="{{ form.email.value|default:'' }}" required>
+            {% for error in form.email.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+          <div>
+            <label class="form-label" for="id_phone">Phone <span style="color: var(--nay-text-muted); font-weight: 400;">(optional)</span></label>
+            <input type="text" name="phone" id="id_phone" class="form-control{% if form.phone.errors %} is-invalid{% endif %}" value="{{ form.phone.value|default:'' }}">
+            {% for error in form.phone.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="nay-card" style="margin-bottom: 1rem;">
+        <div class="nay-card-header"><span class="nay-card-title">Staff Details</span></div>
+        <div style="padding: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label class="form-label" for="id_staff_number">Staff Number</label>
+            <input type="text" name="staff_number" id="id_staff_number" class="form-control{% if form.staff_number.errors %} is-invalid{% endif %}" value="{{ form.staff_number.value|default:'' }}" required>
+            {% for error in form.staff_number.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+          <div>
+            <label class="form-label" for="id_job_title">Job Title</label>
+            <input type="text" name="job_title" id="id_job_title" class="form-control{% if form.job_title.errors %} is-invalid{% endif %}" value="{{ form.job_title.value|default:'' }}" required>
+            {% for error in form.job_title.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+          <div class="col-span-2" style="grid-column: span 2;">
+            <label class="form-label" for="id_department">Department</label>
+            <input type="text" name="department" id="id_department" class="form-control{% if form.department.errors %} is-invalid{% endif %}" value="{{ form.department.value|default:'' }}" required>
+            {% for error in form.department.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="nay-card" style="margin-bottom: 1rem;">
+        <div class="nay-card-header"><span class="nay-card-title">Initial Password</span></div>
+        <div style="padding: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label class="form-label" for="id_initial_password">Initial Password</label>
+            <input type="password" name="initial_password" id="id_initial_password" class="form-control{% if form.initial_password.errors %} is-invalid{% endif %}" required autocomplete="new-password">
+            <div class="form-text">Staff will be required to change this on first login.</div>
+            {% for error in form.initial_password.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+          <div>
+            <label class="form-label" for="id_confirm_password">Confirm Password</label>
+            <input type="password" name="confirm_password" id="id_confirm_password" class="form-control{% if form.confirm_password.errors %} is-invalid{% endif %}" required autocomplete="new-password">
+            {% for error in form.confirm_password.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="nay-card" style="margin-bottom: 1rem;">
+        <div class="nay-card-header"><span class="nay-card-title">Group Assignment</span></div>
+        <div style="padding: 1rem;">
+          <label class="form-label">Assign to groups <span style="color: var(--nay-text-muted); font-weight: 400;">(optional)</span></label>
+          {% if form.groups.errors %}
+          <div class="text-danger" style="font-size: 0.875rem; margin-bottom: 0.5rem;">
+            {% for error in form.groups.errors %}{{ error }}{% endfor %}
+          </div>
+          {% endif %}
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem;">
+            {% for choice in form.groups %}
+            <div class="form-check">
+              {{ choice.tag }}
+              <label class="form-check-label" for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      {# Non-field errors #}
+      {% if form.non_field_errors %}
+      <div class="nay-alert nay-alert-danger mb-3">
+        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+      </div>
+      {% endif %}
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <a href="{% url 'staff:users' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create Staff Account</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Password requirements</span></div>
+      <div style="padding: 1rem; font-size: 0.875rem; color: var(--nay-text-muted);">
+        <ul style="margin: 0; padding-left: 1.25rem;">
+          <li>At least 8 characters long</li>
+          <li>Cannot be entirely numeric</li>
+          <li>Cannot be too similar to personal information</li>
+          <li>Cannot be a commonly used password</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

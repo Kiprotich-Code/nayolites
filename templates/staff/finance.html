@@ -1,0 +1,98 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Finance – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Finance</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Finance</h1>
+    <p class="page-subtitle">Overview of fees, invoices, and payments.</p>
+  </div>
+</div>
+
+<div class="finance-summary">
+  <div class="stat-card">
+    <div class="stat-card-label">Total Billed</div>
+    <div class="stat-card-value">{{ college.currency_symbol }} {{ total_billed|floatformat:"0" }}</div>
+    <div class="stat-card-sub">All active invoices</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-label">Total Collected</div>
+    <div class="stat-card-value" style="color: var(--nay-success);">{{ college.currency_symbol }} {{ total_paid|floatformat:"0" }}</div>
+    <div class="stat-card-sub">Confirmed payments</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-label">Outstanding</div>
+    <div class="stat-card-value" style="color: var(--nay-warning);">{{ college.currency_symbol }} {{ outstanding|floatformat:"0" }}</div>
+    <div class="stat-card-sub">Unpaid balances</div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="nay-table-wrapper">
+      <div class="nay-table-header">
+        <span style="font-weight: 600;">Recent Invoices</span>
+        <a href="{% url 'staff:invoices' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">View all</a>
+      </div>
+      <table class="nay-table">
+        <thead>
+          <tr><th>Invoice</th><th>Student</th><th style="text-align:right">Balance</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          {% for inv in invoices %}
+          <tr>
+            <td style="font-family: monospace; font-size: 0.8125rem;">{{ inv.invoice_number }}</td>
+            <td style="font-size: 0.875rem;">{{ inv.student }}</td>
+            <td style="text-align:right; font-weight: 600;">{{ college.currency_symbol }} {{ inv.balance|floatformat:"0" }}</td>
+            <td><span class="badge-status status-{{ inv.sc }}">{{ inv.status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="nay-table-wrapper" style="margin-bottom: 1rem;">
+      <div class="nay-table-header">
+        <span style="font-weight: 600;">Recent Payments</span>
+        <a href="{% url 'staff:payments' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">View all</a>
+      </div>
+      <table class="nay-table">
+        <thead>
+          <tr><th>Receipt</th><th>Student</th><th style="text-align:right">Amount</th></tr>
+        </thead>
+        <tbody>
+          {% for p in payments %}
+          <tr>
+            <td style="font-family: monospace; font-size: 0.8125rem;">{{ p.receipt }}</td>
+            <td style="font-size: 0.875rem;">{{ p.student }}</td>
+            <td style="text-align:right; font-weight: 600; color: var(--nay-success);">{{ college.currency_symbol }} {{ p.amount|floatformat:"0" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="nay-card">
+      <div class="nay-card-header">
+        <span class="nay-card-title">Fee Structures</span>
+        <a href="{% url 'staff:fee_structures' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">Manage</a>
+      </div>
+      {% for fs in fee_structures %}
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--nay-border-soft); font-size: 0.875rem;">
+        <div>
+          <div style="font-weight: 500;">{{ fs.name }}</div>
+          <div style="font-size: 0.75rem; color: var(--nay-text-muted);">{{ fs.course }} &middot; {{ fs.period }}</div>
+        </div>
+        <span class="badge-status status-success">{{ fs.status }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

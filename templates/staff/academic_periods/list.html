@@ -1,0 +1,80 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Academic Periods – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Academic Periods</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Academic Periods</h1>
+    <p class="page-subtitle">{{ periods.count }} period{{ periods.count|pluralize }} configured</p>
+  </div>
+  {% if can_add %}
+  <a href="{% url 'staff:academic_period_create' %}" class="btn btn-primary">Create Period</a>
+  {% endif %}
+</div>
+
+<div class="nay-table-wrapper">
+  <div class="nay-table-header">
+    <form method="get" style="display: flex; gap: 0.75rem;">
+      <select name="status" class="form-select" style="max-width: 160px;">
+        <option value="">All Statuses</option>
+        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive / Closed</option>
+      </select>
+      <button type="submit" class="btn btn-secondary">Filter</button>
+      {% if status_filter %}<a href="{% url 'staff:academic_periods' %}" class="btn btn-secondary">Clear</a>{% endif %}
+    </form>
+  </div>
+
+  {% if periods %}
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Period Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th style="text-align:center">Enrollments</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in periods %}
+      <tr>
+        <td style="font-weight: 600;">{{ p.name }}</td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ p.start_date|date:"d M Y" }}</td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ p.end_date|date:"d M Y" }}</td>
+        <td style="text-align:center; font-weight: 600;">{{ p.enrollment_count }}</td>
+        <td><span class="badge-status status-{% if p.is_active %}success{% else %}secondary{% endif %}">{% if p.is_active %}Active{% else %}Closed{% endif %}</span></td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'staff:academic_period_edit' p.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+            <form method="post" action="{% url 'staff:academic_period_status' p.pk %}" style="margin: 0;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-secondary"
+                onclick="return confirm('{% if p.is_active %}Close this period?{% else %}Activate this period?{% endif %}')">
+                {% if p.is_active %}Close{% else %}Activate{% endif %}
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-title">No academic periods found</div>
+    <div class="empty-state-desc">
+      {% if status_filter %}No periods match the current filter. <a href="{% url 'staff:academic_periods' %}">Clear filter</a>
+      {% else %}No academic periods have been created yet.
+        {% if can_add %}<a href="{% url 'staff:academic_period_create' %}">Create the first period.</a>{% endif %}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

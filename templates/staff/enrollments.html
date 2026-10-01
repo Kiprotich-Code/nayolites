@@ -1,0 +1,65 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Enrollments – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Enrollments</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Enrollments</h1>
+    <p class="page-subtitle">{{ enrollments|length }} enrollments shown.</p>
+  </div>
+  <a href="#" class="btn btn-primary">Enroll Student</a>
+</div>
+
+<div class="nay-table-wrapper">
+  <div class="nay-table-header">
+    <div style="display: flex; gap: 0.75rem; flex: 1;">
+      <input type="text" class="form-control" placeholder="Search by student or admission number…" style="max-width: 300px;">
+      <select class="form-select" style="max-width: 200px;">
+        <option>All Periods</option>
+        {% for p in periods %}<option>{{ p.name }}</option>{% endfor %}
+      </select>
+      <select class="form-select" style="max-width: 160px;">
+        <option>All Statuses</option>
+        <option>Active</option>
+        <option>Completed</option>
+        <option>Withdrawn</option>
+      </select>
+    </div>
+  </div>
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Admission No.</th>
+        <th>Programme</th>
+        <th>Period</th>
+        <th style="text-align:center">Year</th>
+        <th>Status</th>
+        <th>Enrolled Date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in enrollments %}
+      <tr>
+        <td style="font-weight: 500;">{{ e.student }}</td>
+        <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ e.admission }}</td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ e.course }}</td>
+        <td style="font-size: 0.8125rem;">{{ e.period }}</td>
+        <td style="text-align:center;">{{ e.year }}</td>
+        <td><span class="badge-status status-{{ e.sc }}">{{ e.status }}</span></td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ e.enrolled_date }}</td>
+        <td><a href="#" class="btn btn-sm btn-secondary">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="nay-table-footer">
+    <span>{{ enrollments|length }} records</span>
+  </div>
+</div>
+{% endblock %}

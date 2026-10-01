@@ -1,0 +1,113 @@
+{% extends "components/base_public.html" %}
+
+{% block title %}Create Account – {{ college.short_name }}{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--nay-bg);">
+  <div style="width: 100%; max-width: 520px;">
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div style="width: 48px; height: 48px; background: var(--nay-blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-weight: 800; font-size: 1.25rem; color: var(--nay-accent);">N</div>
+      <h1 style="font-size: 1.375rem; font-weight: 700; margin-bottom: 0.25rem;">Create your student account</h1>
+      <p style="color: var(--nay-text-muted); font-size: 0.875rem;">{{ college.name }}</p>
+    </div>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="nay-alert nay-alert-{{ message.tags|default:'info' }}" style="margin-bottom: 1.25rem;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="nay-card" style="padding: 2rem;">
+      <form method="post" action="{% url 'auth:signup' %}">
+        {% csrf_token %}
+
+        {# Name row — two columns #}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+          <div>
+            <label class="form-label" for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" class="form-control{% if form.first_name.errors %} is-invalid{% endif %}"
+              value="{{ form.first_name.value|default:'' }}"
+              placeholder="First name"
+              autocomplete="given-name" autofocus required>
+            {% for error in form.first_name.errors %}
+              <div class="invalid-feedback" style="display: block; color: var(--nay-danger); font-size: 0.8125rem; margin-top: 0.25rem;">{{ error }}</div>
+            {% endfor %}
+          </div>
+          <div>
+            <label class="form-label" for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" class="form-control{% if form.last_name.errors %} is-invalid{% endif %}"
+              value="{{ form.last_name.value|default:'' }}"
+              placeholder="Last name"
+              autocomplete="family-name" required>
+            {% for error in form.last_name.errors %}
+              <div class="invalid-feedback" style="display: block; color: var(--nay-danger); font-size: 0.8125rem; margin-top: 0.25rem;">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {# Email #}
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label" for="email">Email Address</label>
+          <input type="email" id="email" name="email" class="form-control{% if form.email.errors %} is-invalid{% endif %}"
+            value="{{ form.email.value|default:'' }}"
+            placeholder="you@example.com"
+            autocomplete="email" required>
+          {% for error in form.email.errors %}
+            <div class="invalid-feedback" style="display: block; color: var(--nay-danger); font-size: 0.8125rem; margin-top: 0.25rem;">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {# Phone (optional) #}
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label" for="phone">Phone <span style="color: var(--nay-text-muted); font-weight: 400;">(optional)</span></label>
+          <input type="tel" id="phone" name="phone" class="form-control"
+            value="{{ form.phone.value|default:'' }}"
+            placeholder="+254 700 000 000"
+            autocomplete="tel">
+        </div>
+
+        {# Password #}
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control{% if form.password.errors %} is-invalid{% endif %}"
+            placeholder="At least 8 characters"
+            autocomplete="new-password" required>
+          {% for error in form.password.errors %}
+            <div class="invalid-feedback" style="display: block; color: var(--nay-danger); font-size: 0.8125rem; margin-top: 0.25rem;">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {# Confirm password #}
+        <div style="margin-bottom: 1.5rem;">
+          <label class="form-label" for="confirm_password">Confirm Password</label>
+          <input type="password" id="confirm_password" name="confirm_password" class="form-control{% if form.confirm_password.errors %} is-invalid{% endif %}"
+            placeholder="Repeat your password"
+            autocomplete="new-password" required>
+          {% for error in form.confirm_password.errors %}
+            <div class="invalid-feedback" style="display: block; color: var(--nay-danger); font-size: 0.8125rem; margin-top: 0.25rem;">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        {# Non-field errors #}
+        {% if form.non_field_errors %}
+          <div class="nay-alert nay-alert-danger" style="margin-bottom: 1.25rem;">
+            {% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+          </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 10px;">
+          Create Account
+        </button>
+      </form>
+    </div>
+
+    <p style="text-align: center; font-size: 0.8125rem; color: var(--nay-text-muted); margin-top: 1.5rem;">
+      Already have an account? <a href="{% url 'auth:login' %}" style="color: var(--nay-blue-mid);">Sign in</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}

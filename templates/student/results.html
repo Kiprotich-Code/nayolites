@@ -1,0 +1,53 @@
+{% extends "student/base_student.html" %}
+{% block title %}My Results – {{ college.short_name }}{% endblock %}
+{% block breadcrumbs %}<li class="breadcrumb-item active">My Results</li>{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">My Results</h1>
+</div>
+
+{% if has_results %}
+{% for period_name, results in results_by_period.items %}
+<div style="margin-bottom: 2rem;">
+  <h2 style="font-size: 1rem; font-weight: 700; color: var(--nay-blue); margin-bottom: 1rem;
+              padding-bottom: 0.5rem; border-bottom: 2px solid var(--nay-blue-light);">
+    {{ period_name }}
+  </h2>
+  <div class="nay-table-wrapper">
+    <table class="nay-table">
+      <thead>
+        <tr>
+          <th>Unit Code</th>
+          <th>Unit Name</th>
+          <th style="text-align:center">CAT</th>
+          <th style="text-align:center">Exam</th>
+          <th style="text-align:center">Total</th>
+          <th style="text-align:center">Grade</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        <tr>
+          <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-blue-mid);">{{ r.course_unit.code }}</td>
+          <td style="font-weight: 500;">{{ r.course_unit.name }}</td>
+          <td style="text-align:center;">{{ r.score_cat|default:"—" }}</td>
+          <td style="text-align:center;">{{ r.score_exam|default:"—" }}</td>
+          <td style="text-align:center; font-weight: 600;">{{ r.total|default:"—" }}</td>
+          <td style="text-align:center; font-weight: 800; font-size: 1.125rem; color: var(--nay-blue-mid);">
+            {{ r.grade|default:"—" }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-title">No published results</div>
+  <div class="empty-state-desc">No results have been published for your account yet. Results become visible here once they have been approved and published by the Academic Office.</div>
+</div>
+{% endif %}
+{% endblock %}

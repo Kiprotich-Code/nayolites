@@ -1,0 +1,50 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Groups and Roles – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Groups &amp; Roles</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Groups &amp; Roles</h1>
+    <p class="page-subtitle">Manage permission groups and staff role assignments.</p>
+  </div>
+  <a href="#" class="btn btn-primary">Create Group</a>
+</div>
+
+<div class="nay-table-wrapper">
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Group Name</th>
+        <th>Description</th>
+        <th style="text-align:center">Members</th>
+        <th style="text-align:center">Permissions</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for g in groups %}
+      <tr>
+        <td style="font-weight: 600;">{{ g.name }}</td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ g.desc }}</td>
+        <td style="text-align:center; font-weight: 600;">{{ g.members }}</td>
+        <td style="text-align:center; color: var(--nay-text-muted);">{{ g.permissions }}</td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="#" class="btn btn-sm btn-secondary">Edit</a>
+            <a href="#" class="btn btn-sm btn-secondary">Members</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="nay-alert nay-alert-info" style="margin-top: 1.5rem;">
+  Groups use Django's built-in permissions system. Assign groups to users via the Users page.
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "components/base_public.html" %}
+{% load static %}
+
+{% block title %}Sign In – {{ college.short_name }}{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; padding: 2rem; background: var(--nay-bg);">
+  <div style="width: 100%; max-width: 420px;">
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+      {# <img src="{% static 'img/nayolites-logo.png' %}" alt="{{ college.short_name }} logo" style="height: 56px; width: auto; margin: 0 auto 1rem; display: block;"> #}
+      <h1 style="font-size: 1.375rem; font-weight: 700; margin-bottom: 0.25rem;">Sign in to your account</h1>
+      <p style="color: var(--nay-text-muted); font-size: 0.875rem;">{{ college.name }}</p>
+    </div>
+
+    {% if error %}
+      <div class="nay-alert nay-alert-danger" style="margin-bottom: 1.25rem;">
+        {{ error }}
+      </div>
+    {% endif %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="nay-alert nay-alert-{{ message.tags|default:'info' }}" style="margin-bottom: 1.25rem;">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="nay-card" style="padding: 2rem;">
+      <form method="post" action="{% url 'auth:login' %}">
+        {% csrf_token %}
+        {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+        <div style="margin-bottom: 1.25rem;">
+          <label class="form-label" for="email">Email address</label>
+          <input type="email" id="email" name="email" class="form-control"
+            value="{{ submitted_email|default:'' }}"
+            placeholder="you@student.nayolites.ac.ke"
+            autocomplete="email" autofocus required>
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <label class="form-label" for="password" style="margin: 0;">Password</label>
+            <a href="{% url 'auth:forgot_password' %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">Forgot password?</a>
+          </div>
+          <input type="password" id="password" name="password" class="form-control"
+            placeholder="Enter your password"
+            autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 10px;">
+          Sign In
+        </button>
+      </form>
+    </div>
+
+    <p style="text-align: center; font-size: 0.8125rem; color: var(--nay-text-muted); margin-top: 1.5rem;">
+      Having trouble signing in? Contact <a href="{% url 'public:contact' %}">the registrar's office</a>.
+    </p>
+    <p style="text-align: center; font-size: 0.8125rem; color: var(--nay-text-muted); margin-top: 0.75rem;">
+      New student? <a href="{% url 'auth:signup' %}" style="color: var(--nay-blue-mid);">Create an account</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}

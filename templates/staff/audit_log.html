@@ -1,0 +1,55 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Audit Log – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Audit Log</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Audit Log</h1>
+    <p class="page-subtitle">Record of all significant system actions.</p>
+  </div>
+</div>
+
+<div class="nay-table-wrapper">
+  <div class="nay-table-header">
+    <div style="display: flex; gap: 0.75rem; flex: 1;">
+      <input type="text" class="form-control" placeholder="Search by actor or action…" style="max-width: 300px;">
+      <select class="form-select" style="max-width: 180px;">
+        <option>All Actions</option>
+        <option>Results</option>
+        <option>Payments</option>
+        <option>Enrollment</option>
+        <option>Settings</option>
+      </select>
+    </div>
+  </div>
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Actor</th>
+        <th>Action</th>
+        <th>Object</th>
+        <th>IP Address</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in entries %}
+      <tr>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted); white-space: nowrap;">{{ entry.timestamp }}</td>
+        <td style="font-weight: 500; font-size: 0.875rem;">{{ entry.actor }}</td>
+        <td style="font-size: 0.875rem;">{{ entry.action }}</td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ entry.object }}</td>
+        <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ entry.ip }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="nay-table-footer">
+    <span>{{ entries|length }} log entries</span>
+  </div>
+</div>
+{% endblock %}

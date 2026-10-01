@@ -1,0 +1,80 @@
+{% extends "components/base_public.html" %}
+{% block title %}{{ course.name }} – {{ college.name }}{% endblock %}
+
+{% block content %}
+
+<div style="background: var(--nay-blue); color: #fff; padding: 3rem 0;">
+  <div class="public-container">
+    <p style="font-size: 0.8125rem; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem;">
+      <a href="{% url 'courses:list' %}" style="color: var(--nay-accent);">Programmes</a> /
+      <span>{{ course.name }}</span>
+    </p>
+    <h1 style="font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">{{ course.name }}</h1>
+    <div style="display: flex; gap: 1.5rem; font-size: 0.875rem; color: rgba(255,255,255,0.7); flex-wrap: wrap;">
+      <span>Duration: {{ course.duration }}</span>
+      <span>Code: {{ course.code }}</span>
+    </div>
+  </div>
+</div>
+
+<section class="public-section">
+  <div class="public-container">
+    <div class="row g-5">
+      <div class="col-lg-8">
+
+        {% if course.description %}
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">About this Programme</h2>
+        <p style="color: var(--nay-text-muted); line-height: 1.8; font-size: 0.9375rem; margin-bottom: 2.5rem;">{{ course.description }}</p>
+        {% endif %}
+
+        {% if units %}
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1.25rem;">Programme Units</h2>
+        <div style="border: 1px solid var(--nay-border); border-radius: var(--radius); overflow: hidden; margin-bottom: 2rem;">
+          {% for unit in units %}
+          <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--nay-border-soft); display: flex; align-items: center; gap: 1rem; {% if forloop.last %}border-bottom: none;{% endif %}">
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--nay-blue-mid); min-width: 80px; font-family: monospace;">{{ unit.code }}</span>
+            <span style="font-size: 0.875rem; color: var(--nay-text);">{{ unit.name }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <h2 style="font-size: 1.125rem; font-weight: 700; margin-bottom: 1rem;">General Entry Requirements</h2>
+        <ul style="padding-left: 1.25rem; margin: 0 0 2rem;">
+          <li style="font-size: 0.9375rem; color: var(--nay-text-muted); margin-bottom: 0.5rem; line-height: 1.6;">Kenya Certificate of Secondary Education (KCSE) or equivalent</li>
+          <li style="font-size: 0.9375rem; color: var(--nay-text-muted); margin-bottom: 0.5rem; line-height: 1.6;">National Identity Card or Birth Certificate</li>
+          <li style="font-size: 0.9375rem; color: var(--nay-text-muted); margin-bottom: 0.5rem; line-height: 1.6;">Two passport-size photographs</li>
+          <li style="font-size: 0.9375rem; color: var(--nay-text-muted); line-height: 1.6;">Completed application form</li>
+        </ul>
+
+      </div>
+
+      <div class="col-lg-4">
+        <div class="nay-card" style="position: sticky; top: 80px;">
+          <div class="nay-card-header"><span class="nay-card-title">Apply for this Programme</span></div>
+          {% if active_periods %}
+          <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin-bottom: 1rem; line-height: 1.6;">
+            Applications are now open for the following intakes:
+          </p>
+          <ul style="padding-left: 1.25rem; margin-bottom: 1.25rem;">
+            {% for p in active_periods %}
+            <li style="font-size: 0.875rem; color: var(--nay-text); margin-bottom: 0.25rem;">{{ p.name }}</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p style="font-size: 0.875rem; color: var(--nay-text-muted); margin-bottom: 1.25rem; line-height: 1.6;">
+            No intake is currently open for this programme. Contact us for upcoming intake dates.
+          </p>
+          {% endif %}
+          <a href="{% url 'courses:apply' course.slug %}" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 0.5rem;">Apply Now</a>
+          <a href="{% url 'public:contact' %}" class="btn btn-secondary" style="width: 100%; justify-content: center;">Enquire</a>
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--nay-border-soft);">
+            <p style="font-size: 0.75rem; color: var(--nay-text-muted);">Questions? Call us on <a href="tel:{{ college.phone }}">{{ college.phone }}</a> or email <a href="mailto:admissions@nayolites.ac.ke">admissions@nayolites.ac.ke</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "student/base_student.html" %}
+{% block title %}Fees and Payments – {{ college.short_name }}{% endblock %}
+{% block breadcrumbs %}<li class="breadcrumb-item active">Fees and Payments</li>{% endblock %}
+{% block content %}
+<div class="page-header"><h1 class="page-title">Fees and Payments</h1></div>
+<div class="empty-state">
+  <div class="empty-state-title">Finance module coming soon</div>
+  <div class="empty-state-desc">Your fee statements, invoice history, and payment records will be available here once the Finance module is implemented. For current balances, contact the Finance Office on {{ college.phone }}.</div>
+</div>
+{% endblock %}

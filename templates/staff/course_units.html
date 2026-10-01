@@ -1,0 +1,49 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ course.name }} Units – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:courses' %}">Courses</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:course_detail' course.pk %}">{{ course.name }}</a></li>
+<li class="breadcrumb-item active">Units</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ course.name }}</h1>
+    <p class="page-subtitle">Course units &middot; {{ units|length }} units configured</p>
+  </div>
+  <a href="#" class="btn btn-primary">Add Unit</a>
+</div>
+
+<div class="nay-table-wrapper">
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Unit Code</th>
+        <th>Unit Name</th>
+        <th style="text-align:center">Year</th>
+        <th style="text-align:center">Semester</th>
+        <th style="text-align:center">Credits</th>
+        <th>Lecturer</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in units %}
+      <tr>
+        <td style="font-family: monospace; font-size: 0.8125rem; font-weight: 600; color: var(--nay-blue-mid);">{{ u.code }}</td>
+        <td style="font-weight: 500;">{{ u.name }}</td>
+        <td style="text-align:center;">{{ u.year }}</td>
+        <td style="text-align:center;">{{ u.semester }}</td>
+        <td style="text-align:center;">{{ u.credits }}</td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ u.lecturer }}</td>
+        <td><span class="badge-status status-success">{{ u.status }}</span></td>
+        <td><a href="#" class="btn btn-sm btn-secondary">Edit</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

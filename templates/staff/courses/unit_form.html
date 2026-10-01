@@ -1,0 +1,52 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ page_title }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:courses' %}">Courses</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:course_detail' course.pk %}">{{ course.code }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:course_units' course.pk %}">Units</a></li>
+<li class="breadcrumb-item active">{{ action|title }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">{{ page_title }}</h1>
+</div>
+
+<div style="max-width: 560px;">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="nay-alert nay-alert-danger mb-3">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="nay-card" style="margin-bottom: 1.5rem;">
+      <div class="row g-3" style="padding-top: 0.25rem;">
+        <div class="col-md-4">
+          <label class="form-label">Unit Code *</label>
+          {{ form.code.as_widget }}
+          {% if form.code.errors %}<div class="form-text text-danger">{{ form.code.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Unit Name *</label>
+          {{ form.name.as_widget }}
+          {% if form.name.errors %}<div class="form-text text-danger">{{ form.name.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          {{ form.description.as_widget }}
+        </div>
+        <div class="col-12">
+          <div class="form-check">
+            {{ form.is_active }}
+            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Active</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn btn-primary">{% if action == 'create' %}Add Unit{% else %}Save Changes{% endif %}</button>
+      <a href="{% url 'staff:course_units' course.pk %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Delete Content – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:content' %}">Content</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:content_detail' item.pk %}">{{ item.title|truncatechars:30 }}</a></li>
+<li class="breadcrumb-item active">Delete</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Delete Content</h1>
+</div>
+
+<div style="max-width: 480px;">
+  <div class="nay-card" style="margin-bottom: 1.5rem;">
+    <div class="nay-card-header"><span class="nay-card-title">Confirm Deletion</span></div>
+    <div style="padding: 0.5rem 0;">
+      <p style="font-size: 0.9375rem; margin-bottom: 1rem;">
+        Are you sure you want to permanently delete this content item?
+      </p>
+      <div class="detail-grid">
+        <span class="detail-label">Title</span><span style="font-weight: 600;">{{ item.title }}</span>
+        <span class="detail-label">Course</span><span>{{ item.course.code }} — {{ item.course.name }}</span>
+        {% if item.course_unit %}
+        <span class="detail-label">Unit</span><span>{{ item.course_unit.code }}</span>
+        {% endif %}
+        <span class="detail-label">Type</span><span>{{ item.get_content_type_display }}</span>
+        {% if item.file %}
+        <span class="detail-label">File</span><span style="font-size: 0.875rem; color: var(--nay-danger);">The uploaded file will also be deleted.</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <div style="display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn btn-primary" style="background: var(--nay-danger); border-color: var(--nay-danger);">Delete Permanently</button>
+      <a href="{% url 'staff:content_detail' item.pk %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ page_title }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:courses' %}">Courses</a></li>
+{% if course %}<li class="breadcrumb-item"><a href="{% url 'staff:course_detail' course.pk %}">{{ course.code }}</a></li>{% endif %}
+<li class="breadcrumb-item active">{{ action|title }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">{{ page_title }}</h1>
+</div>
+
+<div style="max-width: 640px;">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="nay-alert nay-alert-danger mb-3">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="nay-card" style="margin-bottom: 1.5rem;">
+      <div class="row g-3" style="padding-top: 0.25rem;">
+        <div class="col-md-3">
+          <label class="form-label">Code *</label>
+          {{ form.code.as_widget }}
+          <div class="form-text">{{ form.code.help_text }}</div>
+          {% if form.code.errors %}<div class="form-text text-danger">{{ form.code.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-9">
+          <label class="form-label">Programme Name *</label>
+          {{ form.name.as_widget }}
+          {% if form.name.errors %}<div class="form-text text-danger">{{ form.name.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Duration *</label>
+          {{ form.duration.as_widget }}
+          <div class="form-text">{{ form.duration.help_text }}</div>
+          {% if form.duration.errors %}<div class="form-text text-danger">{{ form.duration.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-4" style="display: flex; align-items: center; padding-top: 1.5rem;">
+          <div class="form-check">
+            {{ form.is_active }}
+            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">Active (visible in public catalogue)</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Description</label>
+          {{ form.description.as_widget }}
+          {% if form.description.errors %}<div class="form-text text-danger">{{ form.description.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <button type="submit" class="btn btn-primary">{% if action == 'create' %}Create Course{% else %}Save Changes{% endif %}</button>
+      {% if course %}<a href="{% url 'staff:course_detail' course.pk %}" class="btn btn-secondary">Cancel</a>
+      {% else %}<a href="{% url 'staff:courses' %}" class="btn btn-secondary">Cancel</a>{% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Students – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Students</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Students</h1>
+    <p class="page-subtitle">{{ total }} students &middot; {{ active }} active</p>
+  </div>
+  <div>
+    <a href="#" class="btn btn-primary">Add Student</a>
+  </div>
+</div>
+
+<div class="nay-table-wrapper">
+  <div class="nay-table-header">
+    <div style="display: flex; gap: 0.75rem; flex: 1;">
+      <input type="text" class="form-control" placeholder="Search by name or admission number…" style="max-width: 320px;">
+      <select class="form-select" style="max-width: 200px;">
+        <option>All Programmes</option>
+        <option>Diploma in Computer Science</option>
+        <option>Diploma in Broadcast Media</option>
+        <option>Certificate in Graphic Design</option>
+        <option>Certificate in Web Development</option>
+        <option>Diploma in IT Support</option>
+      </select>
+      <select class="form-select" style="max-width: 160px;">
+        <option>All Statuses</option>
+        <option>Active</option>
+        <option>Suspended</option>
+        <option>Completed</option>
+      </select>
+    </div>
+    <span style="font-size: 0.8125rem; color: var(--nay-text-muted); white-space: nowrap;">{{ total }} records</span>
+  </div>
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Admission No.</th>
+        <th>Full Name</th>
+        <th>Programme</th>
+        <th>Year</th>
+        <th>County</th>
+        <th>Status</th>
+        <th>Enrolled</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr>
+        <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.admission }}</td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 0.625rem;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--nay-blue-light); color: var(--nay-blue); display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700; flex-shrink: 0;">{{ s.name|slice:":1" }}</div>
+            <span style="font-weight: 500;">{{ s.name }}</span>
+          </div>
+        </td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.course }}</td>
+        <td style="text-align: center;">{{ s.year }}</td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.county }}</td>
+        <td><span class="badge-status status-{{ s.sc }}">{{ s.status }}</span></td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ s.enrolled }}</td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'staff:student_detail' s.pk %}" class="btn btn-sm btn-secondary">View</a>
+            <a href="{% url 'staff:student_edit' s.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="nay-table-footer">
+    <span>Showing {{ students|length }} of {{ total }} students</span>
+    <div style="display: flex; gap: 0.25rem;">
+      <button class="btn btn-sm btn-secondary" disabled>Previous</button>
+      <button class="btn btn-sm btn-secondary">Next</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

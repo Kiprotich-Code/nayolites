@@ -1,0 +1,106 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Result — {{ result.course_unit.code }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:results' %}">Results</a></li>
+<li class="breadcrumb-item active">{{ result.course_unit.code }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ result.enrollment.student.user.get_full_name }}</h1>
+    <p class="page-subtitle">{{ result.course_unit.code }} — {{ result.course_unit.name }}</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+    <span class="badge-status status-{% if result.status == 'PUBLISHED' %}success{% elif result.status == 'APPROVED' %}info{% elif result.status == 'SUBMITTED' %}warning{% else %}secondary{% endif %}">
+      {{ result.get_status_display }}
+    </span>
+
+    {% if result.status != 'PUBLISHED' %}
+    <form method="post" action="{% url 'staff:result_status' result.pk %}" style="display: flex; gap: 0.5rem;">
+      {% csrf_token %}
+      {{ status_form.new_status.as_hidden }}
+
+      {% if result.status == 'DRAFT' and can_change %}
+      <button type="submit" name="new_status" value="SUBMITTED" class="btn btn-secondary btn-sm">Submit for Review</button>
+      {% endif %}
+
+      {% if result.status == 'SUBMITTED' and can_approve %}
+      <button type="submit" name="new_status" value="APPROVED" class="btn btn-primary btn-sm">Approve</button>
+      <button type="submit" name="new_status" value="DRAFT" class="btn btn-secondary btn-sm"
+        onclick="return confirm('Reset this result to Draft?')">Reset to Draft</button>
+      {% endif %}
+
+      {% if result.status == 'APPROVED' and can_publish %}
+      <button type="submit" name="new_status" value="PUBLISHED" class="btn btn-primary btn-sm"
+        onclick="return confirm('Publish this result? It will become visible to the student.')">Publish</button>
+      <button type="submit" name="new_status" value="DRAFT" class="btn btn-secondary btn-sm"
+        onclick="return confirm('Reset this result to Draft?')">Reset to Draft</button>
+      {% endif %}
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Result</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Student</span>
+        <span><a href="{% url 'staff:student_detail' result.enrollment.student.pk %}">{{ result.enrollment.student.user.get_full_name }}</a></span>
+        <span class="detail-label">Admission</span>
+        <span style="font-family: monospace; font-size: 0.875rem;">{{ result.enrollment.student.admission_number }}</span>
+        <span class="detail-label">Course</span>
+        <span>{{ result.enrollment.course.name }}</span>
+        <span class="detail-label">Unit</span>
+        <span style="font-family: monospace;">{{ result.course_unit.code }} — {{ result.course_unit.name }}</span>
+        <span class="detail-label">Period</span>
+        <span>{{ result.enrollment.academic_period.name }}</span>
+      </div>
+    </div>
+
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Scores</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">CAT (/ 40)</span>
+        <span style="font-size: 1.125rem; font-weight: 600;">{{ result.score_cat|default:"—" }}</span>
+        <span class="detail-label">Exam (/ 60)</span>
+        <span style="font-size: 1.125rem; font-weight: 600;">{{ result.score_exam|default:"—" }}</span>
+        <span class="detail-label">Total (/ 100)</span>
+        <span style="font-size: 1.25rem; font-weight: 700; color: var(--nay-blue);">{{ result.total|default:"—" }}</span>
+        <span class="detail-label">Grade</span>
+        <span style="font-size: 1.5rem; font-weight: 800; color: var(--nay-blue-mid);">{{ result.grade|default:"—" }}</span>
+      </div>
+    </div>
+
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Audit Trail</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Entered by</span><span>{{ result.entered_by|default:"—" }}</span>
+        <span class="detail-label">Approved by</span><span>{{ result.approved_by|default:"—" }}</span>
+        <span class="detail-label">Published</span><span>{{ result.published_at|date:"d M Y, H:i"|default:"—" }}</span>
+        <span class="detail-label">Created</span><span>{{ result.created_at|date:"d M Y, H:i" }}</span>
+        <span class="detail-label">Updated</span><span>{{ result.updated_at|date:"d M Y, H:i" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Grade Reference</span></div>
+      <table class="nay-table" style="font-size: 0.875rem;">
+        <thead><tr><th>Total Score</th><th>Grade</th></tr></thead>
+        <tbody>
+          <tr><td>70 – 100</td><td style="font-weight: 700; color: var(--nay-success);">A</td></tr>
+          <tr><td>60 – 69</td><td style="font-weight: 700; color: var(--nay-blue-mid);">B</td></tr>
+          <tr><td>50 – 59</td><td style="font-weight: 700;">C</td></tr>
+          <tr><td>40 – 49</td><td style="font-weight: 700; color: var(--nay-warning);">D</td></tr>
+          <tr><td>0 – 39</td><td style="font-weight: 700; color: var(--nay-danger);">E</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

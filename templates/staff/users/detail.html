@@ -1,0 +1,201 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ target_user.get_full_name|default:target_user.email }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:users' %}">Users</a></li>
+<li class="breadcrumb-item active">{{ target_user.get_full_name|default:target_user.email }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--nay-blue); color: var(--nay-accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.125rem; flex-shrink: 0;">
+      {{ target_user.first_name|slice:":1" }}{{ target_user.last_name|slice:":1" }}
+    </div>
+    <div>
+      <h1 class="page-title">{{ target_user.get_full_name|default:target_user.email }}</h1>
+      <p class="page-subtitle">{{ target_user.email }}{% if target_user.staffprofile %} &middot; {{ target_user.staffprofile.job_title }}, {{ target_user.staffprofile.department }}{% endif %}</p>
+    </div>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
+    {% if target_user.account_status == 'ACTIVE' %}
+      <span class="badge-status status-success">Active</span>
+    {% elif target_user.account_status == 'SUSPENDED' %}
+      <span class="badge-status status-warning">Suspended</span>
+    {% else %}
+      <span class="badge-status status-muted">Inactive</span>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+
+  {# ---- Left column ---- #}
+  <div class="col-lg-4">
+
+    {# Identity #}
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Identity</span></div>
+      <div class="detail-grid" style="padding: 0.75rem 1rem;">
+        <span class="detail-label">Full name</span><span>{{ target_user.get_full_name|default:"—" }}</span>
+        <span class="detail-label">Email</span><span style="font-size:0.8125rem;">{{ target_user.email }}</span>
+        <span class="detail-label">Phone</span><span>{{ target_user.phone|default:"—" }}</span>
+        <span class="detail-label">Joined</span><span style="font-size:0.8125rem; color:var(--nay-text-muted);">{{ target_user.date_joined|date:"d M Y" }}</span>
+        <span class="detail-label">Last login</span><span style="font-size:0.8125rem; color:var(--nay-text-muted);">{{ target_user.last_login|date:"d M Y H:i"|default:"Never" }}</span>
+        {% if target_user.staffprofile %}
+        <span class="detail-label">Staff no.</span><span style="font-family:monospace; font-size:0.8125rem;">{{ target_user.staffprofile.staff_number }}</span>
+        {% endif %}
+        {% if target_user.force_password_change %}
+        <span class="detail-label">Password</span><span style="font-size:0.8125rem; color:var(--nay-warning);">Change required</span>
+        {% endif %}
+      </div>
+    </div>
+
+    {# Account status change #}
+    {% if perms.accounts.change_user %}
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Account Status</span></div>
+      <div style="padding: 0.75rem 1rem;">
+        {% if is_last_admin %}
+        <div class="nay-alert nay-alert-warning" style="margin-bottom: 0.75rem; font-size:0.8125rem;">
+          This is the last administrator account. Status cannot be changed to Inactive or Suspended until another administrator is assigned.
+        </div>
+        {% endif %}
+        <form method="post" action="{% url 'staff:user_status' target_user.pk %}">
+          {% csrf_token %}
+          <div style="margin-bottom: 0.75rem;">
+            <label class="form-label" for="id_account_status">New status</label>
+            <select name="account_status" id="id_account_status" class="form-select form-select-sm">
+              {% for value, label in status_form.fields.account_status.choices %}
+              <option value="{{ value }}" {% if value == target_user.account_status %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-sm btn-primary" {% if is_last_admin %}title="Last administrator — status change restricted"{% endif %}>
+            Update Status
+          </button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+    {# Password reset #}
+    {% if perms.accounts.change_user %}
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Reset Password</span></div>
+      <div style="padding: 0.75rem 1rem;">
+        <p style="font-size:0.8125rem; color:var(--nay-text-muted); margin-bottom: 0.75rem;">
+          Set a new password for this account. The user will be required to change it on next login.
+        </p>
+        <form method="post" action="{% url 'staff:user_set_password' target_user.pk %}" novalidate>
+          {% csrf_token %}
+          <div style="margin-bottom: 0.5rem;">
+            <label class="form-label" for="id_new_password">New password</label>
+            <input type="password" name="new_password" id="id_new_password" class="form-control form-control-sm" required autocomplete="new-password">
+          </div>
+          <div style="margin-bottom: 0.75rem;">
+            <label class="form-label" for="id_confirm_password">Confirm password</label>
+            <input type="password" name="confirm_password" id="id_confirm_password" class="form-control form-control-sm" required autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn btn-sm btn-secondary">Set Password</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  {# ---- Right column ---- #}
+  <div class="col-lg-8">
+
+    {# Group membership #}
+    {% if perms.accounts.change_user %}
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header">
+        <span class="nay-card-title">Groups &amp; Roles</span>
+      </div>
+      <div style="padding: 0.75rem 1rem;">
+        {% if is_last_admin %}
+        <div class="nay-alert nay-alert-warning" style="margin-bottom: 0.75rem; font-size:0.8125rem;">
+          Removing this user from the Administrator group is blocked while they are the sole administrator.
+        </div>
+        {% endif %}
+
+        {# Current groups #}
+        {% with groups=target_user.groups.all %}
+        {% if groups %}
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+          {% for g in groups %}
+          <span style="display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; background: var(--nay-blue-light); color: var(--nay-blue-mid); padding: 4px 10px; border-radius: 4px;">
+            {{ g.name }}
+            <form method="post" action="{% url 'staff:user_groups' target_user.pk %}" style="display:inline; margin:0; padding:0;">
+              {% csrf_token %}
+              <input type="hidden" name="group" value="{{ g.pk }}">
+              <input type="hidden" name="action" value="remove">
+              <button type="submit" title="Remove from {{ g.name }}" style="background:none; border:none; cursor:pointer; color:inherit; font-size:0.75rem; padding:0; line-height:1;" aria-label="Remove {{ g.name }}">&times;</button>
+            </form>
+          </span>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p style="font-size:0.875rem; color:var(--nay-text-muted); margin-bottom: 1rem;">No groups assigned.</p>
+        {% endif %}
+        {% endwith %}
+
+        {# Add to group #}
+        <form method="post" action="{% url 'staff:user_groups' target_user.pk %}" style="display:flex; gap:0.5rem; align-items:flex-end; flex-wrap:wrap;">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add">
+          <div style="flex:1; min-width:160px;">
+            <label class="form-label" for="id_group_add">Add to group</label>
+            <select name="group" id="id_group_add" class="form-select form-select-sm">
+              <option value="">— select group —</option>
+              {% for g in all_groups %}
+              <option value="{{ g.pk }}" {% if g.pk in user_group_ids %}disabled{% endif %}>
+                {{ g.name }}{% if g.pk in user_group_ids %} (already assigned){% endif %}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-sm btn-primary">Add</button>
+        </form>
+      </div>
+    </div>
+    {% endif %}
+
+    {# Effective permissions inspector #}
+    {% if perms.accounts.change_user %}
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Effective Permissions</span></div>
+      {% if effective_permissions %}
+      <table class="nay-table">
+        <thead>
+          <tr>
+            <th>Permission</th>
+            <th>Code</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for perm in effective_permissions %}
+          <tr>
+            <td style="font-size:0.8125rem;">{{ perm.name }}</td>
+            <td style="font-family:monospace; font-size:0.75rem; color:var(--nay-text-muted);">{{ perm.codename }}</td>
+            <td>
+              {% for source in perm.sources %}
+              <span style="font-size:0.75rem; background:{% if source == 'Direct' %}#e8f5e9; color:#2e7d32{% else %}var(--nay-blue-light); color:var(--nay-blue-mid){% endif %}; padding: 2px 8px; border-radius: 4px; margin-right: 4px; display:inline-block; margin-bottom:2px;">{{ source }}</span>
+              {% endfor %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="empty-state-desc">No permissions assigned to this user.</div></div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

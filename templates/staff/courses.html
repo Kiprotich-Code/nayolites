@@ -1,0 +1,52 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Courses – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Courses</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Courses</h1>
+    <p class="page-subtitle">{{ courses|length }} programmes configured.</p>
+  </div>
+  <a href="#" class="btn btn-primary">Add Course</a>
+</div>
+
+<div class="nay-table-wrapper">
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Programme Name</th>
+        <th>Category</th>
+        <th>Duration</th>
+        <th style="text-align:center">Units</th>
+        <th style="text-align:center">Enrolled</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in courses %}
+      <tr>
+        <td style="font-family: monospace; font-size: 0.8125rem; font-weight: 600; color: var(--nay-blue-mid);">{{ c.code }}</td>
+        <td style="font-weight: 500;">{{ c.name }}</td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ c.category }}</td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ c.duration }}</td>
+        <td style="text-align:center;">{{ c.units }}</td>
+        <td style="text-align:center; font-weight: 600;">{{ c.enrolled }}</td>
+        <td><span class="badge-status status-success">{{ c.status }}</span></td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="{% url 'staff:course_detail' c.pk %}" class="btn btn-sm btn-secondary">View</a>
+            <a href="{% url 'staff:course_units' c.pk %}" class="btn btn-sm btn-secondary">Units</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

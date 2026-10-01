@@ -1,0 +1,62 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Users – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">Users</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Users</h1>
+    <p class="page-subtitle">{{ users|length }} user accounts.</p>
+  </div>
+  <a href="#" class="btn btn-primary">Add User</a>
+</div>
+
+<div class="nay-table-wrapper">
+  <div class="nay-table-header">
+    <input type="text" class="form-control" placeholder="Search by name or email…" style="max-width: 300px;">
+  </div>
+  <table class="nay-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Groups</th>
+        <th>Last Login</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>
+          <div style="display: flex; align-items: center; gap: 0.625rem;">
+            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--nay-blue-light); color: var(--nay-blue); display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700; flex-shrink: 0;">{{ u.name|slice:":1" }}</div>
+            <span style="font-weight: 500;">{{ u.name }}</span>
+          </div>
+        </td>
+        <td style="font-size: 0.875rem; color: var(--nay-text-muted);">{{ u.email }}</td>
+        <td style="font-size: 0.875rem;">{{ u.role }}</td>
+        <td>
+          {% for g in u.groups %}
+          <span style="font-size: 0.75rem; background: var(--nay-blue-light); color: var(--nay-blue-mid); padding: 2px 8px; border-radius: 4px; margin-right: 4px; display: inline-block; margin-bottom: 2px;">{{ g }}</span>
+          {% endfor %}
+        </td>
+        <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ u.last_login }}</td>
+        <td><span class="badge-status status-success">{{ u.status }}</span></td>
+        <td>
+          <div style="display: flex; gap: 0.5rem;">
+            <a href="#" class="btn btn-sm btn-secondary">Edit</a>
+            <a href="#" class="btn btn-sm btn-secondary">Groups</a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

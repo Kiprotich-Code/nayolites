@@ -1,0 +1,112 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ student.user.get_full_name }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:students' %}">Students</a></li>
+<li class="breadcrumb-item active">{{ student.user.get_full_name }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--nay-blue); color: var(--nay-accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.125rem; flex-shrink: 0;">
+      {{ student.user.first_name|slice:":1" }}{{ student.user.last_name|slice:":1" }}
+    </div>
+    <div>
+      <h1 class="page-title">{{ student.user.get_full_name }}</h1>
+      <p class="page-subtitle">{{ student.admission_number }}</p>
+    </div>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+    <span class="badge-status status-{% if student.status == 'ACTIVE' %}success{% elif student.status == 'SUSPENDED' %}warning{% elif student.status == 'GRADUATED' %}info{% else %}secondary{% endif %}">
+      {{ student.get_status_display }}
+    </span>
+    {% if can_edit %}
+    <a href="{% url 'staff:student_edit' student.pk %}" class="btn btn-secondary btn-sm">Edit Record</a>
+    {% endif %}
+    {% if can_change_status %}
+    <a href="{% url 'staff:student_status' student.pk %}" class="btn btn-secondary btn-sm">Change Status</a>
+    {% endif %}
+    {% if can_enroll %}
+    <a href="{% url 'staff:enrollment_create' %}?student={{ student.pk }}" class="btn btn-primary btn-sm">Enroll Student</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Identity</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Admission No.</span><span style="font-family: monospace; font-size: 0.875rem;">{{ student.admission_number }}</span>
+        <span class="detail-label">Full Name</span><span>{{ student.user.get_full_name }}</span>
+        <span class="detail-label">Email</span><span style="font-size: 0.8125rem; word-break: break-all;">{{ student.user.email }}</span>
+        <span class="detail-label">Phone</span><span>{{ student.user.phone|default:"—" }}</span>
+        <span class="detail-label">Gender</span><span>{{ student.get_gender_display|default:"—" }}</span>
+        <span class="detail-label">Date of Birth</span><span>{{ student.date_of_birth|date:"d M Y"|default:"—" }}</span>
+        <span class="detail-label">County</span><span>{{ student.county|default:"—" }}</span>
+      </div>
+    </div>
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Contact & Address</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Address</span><span style="font-size: 0.875rem;">{{ student.address|default:"—" }}</span>
+      </div>
+    </div>
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Emergency Contact</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Name</span><span>{{ student.emergency_contact_name|default:"—" }}</span>
+        <span class="detail-label">Phone</span><span>{{ student.emergency_contact_phone|default:"—" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="nay-table-wrapper" style="margin-bottom: 1rem;">
+      <div class="nay-table-header">
+        <span style="font-weight: 600;">Enrollment History</span>
+        {% if can_enroll %}
+        <a href="{% url 'staff:enrollment_create' %}?student={{ student.pk }}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">+ New Enrollment</a>
+        {% endif %}
+      </div>
+      {% if enrollments %}
+      <table class="nay-table">
+        <thead>
+          <tr><th>Period</th><th>Course</th><th>Status</th><th>Enrolled</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for e in enrollments %}
+          <tr>
+            <td style="font-weight: 500;">{{ e.academic_period.name }}</td>
+            <td style="font-size: 0.8125rem;">{{ e.course.code }} — {{ e.course.name }}</td>
+            <td>
+              <span class="badge-status status-{% if e.status == 'ACTIVE' %}success{% elif e.status == 'PENDING' %}warning{% elif e.status == 'COMPLETED' %}info{% else %}secondary{% endif %}">
+                {{ e.get_status_display }}
+              </span>
+            </td>
+            <td style="font-size: 0.8125rem; color: var(--nay-text-muted);">{{ e.enrolled_at|date:"d M Y" }}</td>
+            <td><a href="{% url 'staff:enrollment_detail' e.pk %}" style="font-size: 0.8125rem; color: var(--nay-blue-mid);">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-state-desc">No enrollment records for this student.</div>
+        {% if can_enroll %}
+        <a href="{% url 'staff:enrollment_create' %}?student={{ student.pk %}" class="btn btn-sm btn-primary" style="margin-top: 0.5rem;">Enroll Student</a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">Future Modules</span></div>
+      <div style="padding: 0.5rem 0; font-size: 0.875rem; color: var(--nay-text-muted);">
+        Finance, Results, Documents, and Content records will appear here when those modules are implemented.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

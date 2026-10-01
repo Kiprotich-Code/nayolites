@@ -1,0 +1,66 @@
+{% extends "student/base_student.html" %}
+{% block title %}My Course – {{ college.short_name }}{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item active">My Course</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">My Course</h1>
+</div>
+
+{% if current_enrollment %}
+<div class="row g-4">
+  <div class="col-md-5">
+    <div class="nay-card" style="margin-bottom: 1rem;">
+      <div class="nay-card-header"><span class="nay-card-title">Current Enrolment</span></div>
+      <div class="detail-grid">
+        <span class="detail-label">Programme</span><span style="font-weight: 600;">{{ current_enrollment.course.name }}</span>
+        <span class="detail-label">Code</span><span style="font-family: monospace;">{{ current_enrollment.course.code }}</span>
+        <span class="detail-label">Duration</span><span>{{ current_enrollment.course.duration }}</span>
+        <span class="detail-label">Period</span><span>{{ current_enrollment.academic_period.name }}</span>
+        <span class="detail-label">Status</span>
+        <span><span class="badge-status status-{% if current_enrollment.status == 'ACTIVE' %}success{% elif current_enrollment.status == 'PENDING' %}warning{% else %}secondary{% endif %}">{{ current_enrollment.get_status_display }}</span></span>
+        <span class="detail-label">Enrolled</span><span>{{ current_enrollment.enrolled_at|date:"d M Y" }}</span>
+      </div>
+    </div>
+    {% if current_enrollment.course.description %}
+    <div class="nay-card">
+      <div class="nay-card-header"><span class="nay-card-title">About this Programme</span></div>
+      <p style="font-size: 0.875rem; color: var(--nay-text-muted); line-height: 1.7; margin: 0.5rem 0 0;">{{ current_enrollment.course.description }}</p>
+    </div>
+    {% endif %}
+  </div>
+  <div class="col-md-7">
+    <div class="nay-table-wrapper">
+      <div class="nay-table-header">
+        <span style="font-weight: 600;">Course Units ({{ units.count }})</span>
+      </div>
+      {% if units %}
+      <table class="nay-table">
+        <thead>
+          <tr><th>Code</th><th>Unit Name</th></tr>
+        </thead>
+        <tbody>
+          {% for unit in units %}
+          <tr>
+            <td style="font-family: monospace; font-size: 0.8125rem; color: var(--nay-blue-mid);">{{ unit.code }}</td>
+            <td style="font-weight: 500;">{{ unit.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="empty-state-desc">No units have been configured for this course yet.</div></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-state-title">No active enrolment</div>
+  <div class="empty-state-desc">You have no active enrolment on record. Contact the Registrar's office for assistance.</div>
+</div>
+{% endif %}
+{% endblock %}
