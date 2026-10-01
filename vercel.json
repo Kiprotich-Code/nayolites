@@ -2,7 +2,15 @@
   "builds": [
     {
       "src": "nayolites/wsgi.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "includeFiles": [
+          "templates/**",
+          "static/**",
+          "apps/**",
+          "nayolites/**"
+        ]
+      }
     }
   ],
   "routes": [
