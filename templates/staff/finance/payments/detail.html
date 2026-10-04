@@ -1,0 +1,97 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ payment.payment_reference }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:payments' %}">Payments</a></li>
+<li class="breadcrumb-item active">{{ payment.payment_reference }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">{{ payment.payment_reference }}</h1>
+  {% if can_allocate and payment.status == 'SUCCESSFUL' and unallocated > 0 %}
+  <a href="{% url 'staff:payment_allocate' pk=payment.pk %}" class="btn btn-outline-primary btn-sm">Allocate</a>
+  {% endif %}
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="nay-card p-4 mb-3">
+      <dl class="row mb-0">
+        <dt class="col-sm-4">Student</dt><dd class="col-sm-8">{{ payment.enrollment.student }}</dd>
+        <dt class="col-sm-4">Amount</dt>
+        <dd class="col-sm-8"><strong>{{ college.currency_symbol }} {{ payment.amount|floatformat:2 }}</strong></dd>
+        <dt class="col-sm-4">Method</dt><dd class="col-sm-8">{{ payment.get_method_display }}</dd>
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8"><span class="badge-status status-{{ payment.status|lower }}">{{ payment.get_status_display }}</span></dd>
+        <dt class="col-sm-4">Paid at</dt><dd class="col-sm-8">{{ payment.paid_at|date:"d M Y H:i"|default:"—" }}</dd>
+        {% if payment.payer_name %}
+        <dt class="col-sm-4">Payer</dt><dd class="col-sm-8">{{ payment.payer_name }}</dd>
+        {% endif %}
+        {% if payment.recorded_by %}
+        <dt class="col-sm-4">Recorded by</dt><dd class="col-sm-8">{{ payment.recorded_by }}</dd>
+        {% endif %}
+        {% if unallocated > 0 %}
+        <dt class="col-sm-4">Unallocated</dt>
+        <dd class="col-sm-8 text-warning fw-semibold">{{ college.currency_symbol }} {{ unallocated|floatformat:2 }}</dd>
+        {% endif %}
+      </dl>
+    </div>
+
+    {% if payment.allocations.all %}
+    <div class="nay-card mb-3">
+      <div class="nay-card-header">Allocations</div>
+      <div class="nay-table-wrapper">
+        <table class="nay-table">
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th class="text-end">Allocated</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for alloc in payment.allocations.all %}
+          <tr>
+            <td><a href="{% url 'staff:invoice_detail' pk=alloc.invoice.pk %}">{{ alloc.invoice.invoice_number }}</a></td>
+            <td class="text-end">{{ alloc.allocated_amount|floatformat:2 }}</td>
+            <td>{{ alloc.created_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if provider_tx %}
+    <div class="nay-card mb-3">
+      <div class="nay-card-header">Provider Transaction</div>
+      <div class="p-3">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Provider</dt><dd class="col-sm-8">{{ provider_tx.provider }}</dd>
+          <dt class="col-sm-4">TX ID</dt><dd class="col-sm-8"><code>{{ provider_tx.provider_tx_id }}</code></dd>
+          <dt class="col-sm-4">Reference</dt><dd class="col-sm-8">{{ provider_tx.provider_reference|default:"—" }}</dd>
+          <dt class="col-sm-4">Status</dt><dd class="col-sm-8">{{ provider_tx.provider_status }}</dd>
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-5">
+    {% if receipt %}
+    <div class="nay-card p-3">
+      <div class="fw-semibold mb-2">Receipt</div>
+      <div>{{ receipt.receipt_number }}</div>
+      <div class="text-muted small">{{ receipt.issued_at|date:"d M Y H:i" }}</div>
+      <div class="mt-2">
+        <a href="{% url 'staff:receipt_detail' pk=receipt.pk %}" class="btn btn-link btn-sm p-0">View</a>
+        <a href="{% url 'staff:receipt_print' pk=receipt.pk %}" class="btn btn-link btn-sm p-0 ms-3" target="_blank">Print</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

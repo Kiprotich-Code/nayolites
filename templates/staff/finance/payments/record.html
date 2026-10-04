@@ -1,0 +1,29 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Record Payment – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:payments' %}">Payments</a></li>
+<li class="breadcrumb-item active">Record Payment</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Record Manual Payment</h1>
+  <a href="{% url 'staff:payments' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+<div class="nay-card p-4" style="max-width:600px">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label fw-medium">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+      {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Record Payment</button>
+  </form>
+</div>
+{% endblock %}

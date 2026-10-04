@@ -1,0 +1,28 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}New Invoice – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:invoices' %}">Invoices</a></li>
+<li class="breadcrumb-item active">New</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">New Invoice</h1>
+  <a href="{% url 'staff:invoices' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+<div class="nay-card p-4">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Create Invoice</button>
+  </form>
+</div>
+{% endblock %}

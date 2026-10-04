@@ -27,6 +27,18 @@ from apps.content.staff_views import (
     ContentListView, ContentCreateView, ContentDetailView,
     ContentEditView, ContentDeleteView,
 )
+# Finance CBVs
+from apps.finance.staff_views import (
+    FinanceDashboardView,
+    FinanceFeeStructureListView, FinanceFeeStructureCreateView,
+    FinanceFeeStructureDetailView, FinanceFeeStructureEditView,
+    InvoiceListView, InvoiceCreateView, InvoiceDetailView,
+    InvoiceIssueView, InvoiceVoidView, InvoiceEditView,
+    PaymentListView, PaymentDetailView,
+    ManualPaymentCreateView, PaymentAllocateView,
+    ReceiptDetailView, ReceiptPrintView,
+    StudentFinancialStatementView,
+)
 
 app_name = "staff"
 
@@ -94,14 +106,26 @@ urlpatterns = [
     path("content/<int:pk>/delete/", ContentDeleteView.as_view(), name="content_delete"),
 
     # ----------------------------------------------------------------
-    # Finance — prototype stubs
+    # Finance finance CBVs — replace stubs
     # ----------------------------------------------------------------
-    path("finance/", v.staff_finance, name="finance"),
-    path("finance/fee-structures/", v.staff_fee_structures, name="fee_structures"),
-    path("finance/invoices/", v.staff_invoices, name="invoices"),
-    path("finance/invoices/<str:invoice_number>/", v.staff_invoice_detail, name="invoice_detail"),
-    path("finance/payments/", v.staff_payments, name="payments"),
-    path("finance/payments/<int:pk>/", v.staff_payment_detail, name="payment_detail"),
+    path("finance/", FinanceDashboardView.as_view(), name="finance"),
+    path("finance/fee-structures/", FinanceFeeStructureListView.as_view(), name="fee_structures"),
+    path("finance/fee-structures/create/", FinanceFeeStructureCreateView.as_view(), name="fee_structure_create"),
+    path("finance/fee-structures/<int:pk>/", FinanceFeeStructureDetailView.as_view(), name="fee_structure_detail"),
+    path("finance/fee-structures/<int:pk>/edit/", FinanceFeeStructureEditView.as_view(), name="fee_structure_edit"),
+    path("finance/invoices/", InvoiceListView.as_view(), name="invoices"),
+    path("finance/invoices/create/", InvoiceCreateView.as_view(), name="invoice_create"),
+    path("finance/invoices/<int:pk>/", InvoiceDetailView.as_view(), name="invoice_detail"),
+    path("finance/invoices/<int:pk>/issue/", InvoiceIssueView.as_view(), name="invoice_issue"),
+    path("finance/invoices/<int:pk>/void/", InvoiceVoidView.as_view(), name="invoice_void"),
+    path("finance/invoices/<int:pk>/edit/", InvoiceEditView.as_view(), name="invoice_edit"),
+    path("finance/payments/", PaymentListView.as_view(), name="payments"),
+    path("finance/payments/record/", ManualPaymentCreateView.as_view(), name="payment_record"),
+    path("finance/payments/<int:pk>/", PaymentDetailView.as_view(), name="payment_detail"),
+    path("finance/payments/<int:pk>/allocate/", PaymentAllocateView.as_view(), name="payment_allocate"),
+    path("finance/receipts/<int:pk>/", ReceiptDetailView.as_view(), name="receipt_detail"),
+    path("finance/receipts/<int:pk>/print/", ReceiptPrintView.as_view(), name="receipt_print"),
+    path("finance/students/<int:student_pk>/statement/", StudentFinancialStatementView.as_view(), name="student_statement"),
 
     # ----------------------------------------------------------------
     # User management — real views (Phase 7)

@@ -104,12 +104,24 @@ DATABASES = {
         "PASSWORD": "REDACTED_DATABASE_PASSWORD",
         "HOST": "ep-royal-thunder-b4idgmxg-pooler.c-6.us-east-2.aws.neon.tech",
         "PORT": "5432",
-        "OPTIONS": {
-            "sslmode": "require",
-            "channel_binding": "require",
-        },
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "neondb",
+#         "USER": "REDACTED_DATABASE_USER",
+#         "PASSWORD": "REDACTED_DATABASE_PASSWORD",
+#         "HOST": "ep-steep-mountain-b5y9zmxi-pooler.c-7.us-east-2.aws.neon.tech",
+#         "PORT": "5432",
+#         "OPTIONS": {
+#             "sslmode": "require",
+#             "channel_binding": "require",
+#         },
+#     }
+# }
+
 # ---------------------------------------------------------------------------
 # Authentication
 # ---------------------------------------------------------------------------
@@ -228,3 +240,14 @@ CSRF_COOKIE_HTTPONLY = False  # Must be False for AJAX CSRF token reads
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+# ---------------------------------------------------------------------------
+# Finance
+# ---------------------------------------------------------------------------
+
+from decimal import Decimal as _Decimal
+FINANCE_MINIMUM_PAYMENT_FLOOR = _Decimal('500.00')
+PAYHERO_API_KEY = config('PAYHERO_API_KEY', default='')
+PAYHERO_CHANNEL_ID = config('PAYHERO_CHANNEL_ID', default='')
+PAYHERO_WEBHOOK_SECRET = config('PAYHERO_WEBHOOK_SECRET', default='')
+PAYHERO_CALLBACK_URL = config('PAYHERO_CALLBACK_URL', default='https://example.com/finance/callbacks/payhero/')

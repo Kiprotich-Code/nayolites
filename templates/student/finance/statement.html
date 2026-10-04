@@ -1,0 +1,51 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+<h1 class="mb-4">Financial Statement</h1>
+
+<div class="row g-2 mb-4">
+  <div class="col-sm-4">
+    <div class="card p-2 border text-center">
+      <small class="text-muted">Total Billed</small>
+      <div class="fw-bold">KES {{ summary.total_billed|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card p-2 border text-center">
+      <small class="text-muted">Total Paid</small>
+      <div class="fw-bold text-success">KES {{ summary.total_paid|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card p-2 border text-center">
+      <small class="text-muted">Outstanding</small>
+      <div class="fw-bold text-danger">KES {{ summary.total_outstanding|floatformat:2 }}</div>
+    </div>
+  </div>
+</div>
+
+{% for enr_data in summary.enrollments %}
+<h5>{{ enr_data.enrollment.course }} — {{ enr_data.enrollment.academic_period }}</h5>
+{% if enr_data.invoices %}
+<table class="table table-sm mb-4">
+  <thead>
+    <tr>
+      <th>Invoice</th>
+      <th>Status</th>
+      <th class="text-end">Balance</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for inv in enr_data.invoices %}
+  <tr>
+    <td><a href="{% url 'student:my_invoice_detail' pk=inv.pk %}">{{ inv.invoice_number }}</a></td>
+    <td>{{ inv.get_status_display }}</td>
+    <td class="text-end">KES {{ enr_data.balance|floatformat:2 }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% empty %}
+<p class="text-muted">No financial activity found.</p>
+{% endfor %}
+{% endblock %}

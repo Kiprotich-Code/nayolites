@@ -1,0 +1,40 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}New Fee Structure – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:fee_structures' %}">Fee Structures</a></li>
+<li class="breadcrumb-item active">New</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">New Fee Structure</h1>
+  <a href="{% url 'staff:fee_structures' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+<div class="nay-card p-4">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label fw-medium">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+      {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <hr>
+    <h6 class="mb-3">Fee Items</h6>
+    {{ formset.management_form }}
+    <table class="nay-table mb-3">
+      <thead><tr><th>Name</th><th>Amount (KES)</th><th>Order</th><th>Delete</th></tr></thead>
+      <tbody>
+      {% for item_form in formset %}
+      <tr>{{ item_form.as_table }}</tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Create Fee Structure</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ fee_structure.name }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:fee_structures' %}">Fee Structures</a></li>
+<li class="breadcrumb-item active">{{ fee_structure.name }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">{{ fee_structure.name }}</h1>
+  <div>
+    {% if can_edit %}<a href="{% url 'staff:fee_structure_edit' pk=fee_structure.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>{% endif %}
+    {% if can_activate %}
+    <form method="post" class="d-inline ms-2">
+      {% csrf_token %}
+      <button class="btn btn-outline-{% if fee_structure.is_active %}warning{% else %}success{% endif %} btn-sm">
+        {% if fee_structure.is_active %}Deactivate{% else %}Activate{% endif %}
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+<div class="nay-card p-4 mb-3">
+  <dl class="row mb-0">
+    <dt class="col-sm-3">Course</dt><dd class="col-sm-9">{{ fee_structure.course }}</dd>
+    <dt class="col-sm-3">Period</dt><dd class="col-sm-9">{{ fee_structure.academic_period|default:"All periods" }}</dd>
+    <dt class="col-sm-3">Currency</dt><dd class="col-sm-9">{{ fee_structure.currency }}</dd>
+    <dt class="col-sm-3">Status</dt>
+    <dd class="col-sm-9">
+      {% if fee_structure.is_active %}
+        <span class="badge-status status-active">Active</span>
+      {% else %}
+        <span class="badge-status status-inactive">Inactive</span>
+      {% endif %}
+    </dd>
+  </dl>
+</div>
+<div class="nay-card">
+  <div class="nay-card-header">Fee Items</div>
+  <div class="nay-table-wrapper">
+    <table class="nay-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Item</th>
+          <th class="text-end">Amount (KES)</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for item in fee_structure.items.all %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ item.name }}</td>
+        <td class="text-end">{{ item.amount|floatformat:2 }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3" class="text-muted text-center">No fee items.</td></tr>
+      {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="2">Total</th>
+          <th class="text-end">{{ fee_structure.total_amount|floatformat:2 }}</th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+<h1 class="mb-4">My Receipts</h1>
+{% if receipts %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Receipt No.</th>
+      <th>Amount</th>
+      <th>Date</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for rcpt in receipts %}
+  <tr>
+    <td>{{ rcpt.receipt_number }}</td>
+    <td>KES {{ rcpt.payment.amount|floatformat:2 }}</td>
+    <td>{{ rcpt.issued_at|date:"d M Y" }}</td>
+    <td><a href="{% url 'student:my_receipt_detail' pk=rcpt.pk %}">View</a></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">No receipts found.</p>
+{% endif %}
+{% endblock %}

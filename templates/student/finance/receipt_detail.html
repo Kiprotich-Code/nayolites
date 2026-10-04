@@ -1,0 +1,16 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+<h1 class="mb-3">Receipt {{ receipt.receipt_number }}</h1>
+
+<div class="card p-3">
+  <dl class="row mb-0">
+    <dt class="col-sm-4">Receipt No.</dt><dd class="col-sm-8">{{ receipt.receipt_number }}</dd>
+    <dt class="col-sm-4">Amount</dt>
+    <dd class="col-sm-8"><strong>KES {{ receipt.payment.amount|floatformat:2 }}</strong></dd>
+    <dt class="col-sm-4">Method</dt><dd class="col-sm-8">{{ receipt.payment.get_method_display }}</dd>
+    <dt class="col-sm-4">Reference</dt><dd class="col-sm-8">{{ receipt.payment.payment_reference }}</dd>
+    <dt class="col-sm-4">Date</dt><dd class="col-sm-8">{{ receipt.issued_at|date:"d M Y H:i" }}</dd>
+    <dt class="col-sm-4">Course</dt><dd class="col-sm-8">{{ receipt.payment.enrollment.course }}</dd>
+  </dl>
+</div>
+{% endblock %}

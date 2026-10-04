@@ -1,0 +1,40 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+<h1 class="mb-3">Invoice {{ invoice.invoice_number }}</h1>
+
+<div class="card mb-3 p-3">
+  <dl class="row mb-0">
+    <dt class="col-sm-4">Course</dt><dd class="col-sm-8">{{ invoice.enrollment.course }}</dd>
+    <dt class="col-sm-4">Period</dt><dd class="col-sm-8">{{ invoice.enrollment.academic_period }}</dd>
+    <dt class="col-sm-4">Status</dt><dd class="col-sm-8">{{ invoice.get_status_display }}</dd>
+    <dt class="col-sm-4">Due</dt><dd class="col-sm-8">{{ invoice.due_date|date:"d M Y"|default:"—" }}</dd>
+  </dl>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Description</th>
+      <th class="text-end">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in invoice.items.all %}
+  <tr>
+    <td>{{ item.description }}</td>
+    <td class="text-end">KES {{ item.total_amount|floatformat:2 }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <th>Outstanding Balance</th>
+      <th class="text-end text-danger">KES {{ balance|floatformat:2 }}</th>
+    </tr>
+  </tfoot>
+</table>
+
+{% if balance > 0 and invoice.status != 'VOID' %}
+<a href="{% url 'student:pay' enrollment_pk=invoice.enrollment.pk %}" class="btn btn-success">Pay Now</a>
+{% endif %}
+{% endblock %}

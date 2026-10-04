@@ -1,0 +1,32 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Allocate Payment – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:payments' %}">Payments</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:payment_detail' pk=payment.pk %}">{{ payment.payment_reference }}</a></li>
+<li class="breadcrumb-item active">Allocate</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Allocate: {{ payment.payment_reference }}</h1>
+  <a href="{% url 'staff:payment_detail' pk=payment.pk %}" class="btn btn-outline-secondary btn-sm">Cancel</a>
+</div>
+<div class="nay-card p-4" style="max-width:500px">
+  <p class="text-muted">
+    Payment amount: <strong>{{ college.currency_symbol }} {{ payment.amount|floatformat:2 }}</strong>
+  </p>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Allocate</button>
+  </form>
+</div>
+{% endblock %}

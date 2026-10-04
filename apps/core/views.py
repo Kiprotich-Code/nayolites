@@ -252,54 +252,11 @@ DEPARTMENTS = [
 
 def public_home(request):
     """
-    College homepage with featured courses pulled from the database.
-    Falls back to mock data if the Course table is empty (fresh install).
+    Root URL — redirects all visitors to the sign-in page.
+    The public website is still accessible via /courses/, /about/, etc.
     """
-    from apps.courses.models import Course as CourseModel
-
-    db_courses = list(CourseModel.objects.filter(is_active=True).order_by('name')[:6])
-
-    if db_courses:
-        # Shape DB records to match the template's expected keys
-        featured_courses = [
-            {
-                'id': c.pk,
-                'slug': c.slug,
-                'code': c.code,
-                'name': c.name,
-                'description': c.description,
-                'duration': c.duration,
-                'unit_count': c.unit_count,
-                'from_db': True,
-            }
-            for c in db_courses
-        ]
-        total_courses = CourseModel.objects.filter(is_active=True).count()
-    else:
-        # Fallback: use mock data so the page never looks empty
-        featured_courses = [c for c in COURSES if c.get('featured')]
-        total_courses = len(COURSES)
-
-    context = {
-        'page_title': 'Nayolites Compute and Media College',
-        'featured_courses': featured_courses,
-        'total_courses': total_courses,
-        'total_students': 847,
-        'years_established': 12,
-        'departments': DEPARTMENTS,
-        'hero': {
-            'headline': 'Computing. Creating. Leading.',
-            'subheadline': (
-                'Join a community of learners building careers in '
-                'technology, media, and design.'
-            ),
-            'cta_primary': {'label': 'View Programmes', 'url': '/courses/'},
-            'cta_secondary': {'label': 'Apply Now', 'url': '/admissions/'},
-        },
-        'next_intake': 'September 2026',
-        'admission_open': True,
-    }
-    return render(request, 'public/home.html', context)
+    from django.shortcuts import redirect
+    return redirect('/auth/login/')
 
 
 def public_about(request):

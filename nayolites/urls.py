@@ -31,6 +31,9 @@ urlpatterns = [
     # REST API v1
     path('api/v1/', include('apps.core.api_urls', namespace='api')),
 
+    # Finance (webhook endpoint — must be outside staff auth middleware)
+    path('finance/', include('apps.finance.urls')),
+
     # Public website (must be last — catches remaining paths)
     path('', include('apps.core.urls', namespace='public')),
 ]

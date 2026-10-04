@@ -1,0 +1,118 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}{{ invoice.invoice_number }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:invoices' %}">Invoices</a></li>
+<li class="breadcrumb-item active">{{ invoice.invoice_number }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">{{ invoice.invoice_number }}</h1>
+  <div>
+    {% if can_issue and perms.finance.issue_invoice %}
+    <form method="post" action="{% url 'staff:invoice_issue' pk=invoice.pk %}" class="d-inline">
+      {% csrf_token %}
+      <button class="btn btn-success btn-sm">Issue Invoice</button>
+    </form>
+    {% endif %}
+    {% if can_edit and perms.finance.change_invoice %}
+    <a href="{% url 'staff:invoice_edit' pk=invoice.pk %}" class="btn btn-outline-secondary btn-sm ms-1">Edit</a>
+    {% endif %}
+    {% if can_void and perms.finance.void_invoice %}
+    <a href="{% url 'staff:invoice_void' pk=invoice.pk %}" class="btn btn-outline-danger btn-sm ms-1">Void</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="nay-card p-4 mb-3">
+      <dl class="row mb-0">
+        <dt class="col-sm-4">Student</dt>
+        <dd class="col-sm-8">
+          {{ invoice.enrollment.student }}
+          <small class="text-muted">({{ invoice.enrollment.student.admission_number }})</small>
+        </dd>
+        <dt class="col-sm-4">Course</dt><dd class="col-sm-8">{{ invoice.enrollment.course }}</dd>
+        <dt class="col-sm-4">Period</dt><dd class="col-sm-8">{{ invoice.enrollment.academic_period }}</dd>
+        <dt class="col-sm-4">Status</dt>
+        <dd class="col-sm-8"><span class="badge-status status-{{ invoice.status|lower }}">{{ invoice.get_status_display }}</span></dd>
+        <dt class="col-sm-4">Issued</dt><dd class="col-sm-8">{{ invoice.issued_at|date:"d M Y H:i"|default:"—" }}</dd>
+        <dt class="col-sm-4">Due</dt><dd class="col-sm-8">{{ invoice.due_date|date:"d M Y"|default:"—" }}</dd>
+        {% if invoice.notes %}
+        <dt class="col-sm-4">Notes</dt><dd class="col-sm-8">{{ invoice.notes }}</dd>
+        {% endif %}
+      </dl>
+    </div>
+
+    <div class="nay-card mb-3">
+      <div class="nay-card-header">Charges</div>
+      <div class="nay-table-wrapper">
+        <table class="nay-table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th class="text-end">Qty</th>
+              <th class="text-end">Unit</th>
+              <th class="text-end">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for item in invoice.items.all %}
+          <tr>
+            <td>{{ item.description }}</td>
+            <td class="text-end">{{ item.quantity }}</td>
+            <td class="text-end">{{ item.unit_amount|floatformat:2 }}</td>
+            <td class="text-end">{{ item.total_amount|floatformat:2 }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if invoice.allocations.all %}
+    <div class="nay-card">
+      <div class="nay-card-header">Payment Allocations</div>
+      <div class="nay-table-wrapper">
+        <table class="nay-table">
+          <thead>
+            <tr>
+              <th>Payment Ref.</th>
+              <th>Method</th>
+              <th class="text-end">Allocated</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for alloc in invoice.allocations.all %}
+          <tr>
+            <td><a href="{% url 'staff:payment_detail' pk=alloc.payment.pk %}">{{ alloc.payment.payment_reference }}</a></td>
+            <td>{{ alloc.payment.get_method_display }}</td>
+            <td class="text-end">{{ alloc.allocated_amount|floatformat:2 }}</td>
+            <td>{{ alloc.created_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    <div class="nay-card p-3">
+      <div class="mb-2 d-flex justify-content-between">
+        <span class="text-muted">Outstanding</span>
+        <strong class="text-danger">{{ college.currency_symbol }} {{ balance|floatformat:2 }}</strong>
+      </div>
+      {% if perms.finance.add_payment and invoice.status != 'VOID' and invoice.status != 'PAID' %}
+      <hr>
+      <a href="{% url 'staff:payment_record' %}" class="btn btn-success btn-sm w-100">Record Payment</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

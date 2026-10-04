@@ -1,0 +1,30 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+<h1 class="mb-4">My Payments</h1>
+{% if payments %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>Reference</th>
+      <th>Method</th>
+      <th class="text-end">Amount</th>
+      <th>Status</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for pmt in payments %}
+  <tr>
+    <td>{{ pmt.payment_reference }}</td>
+    <td>{{ pmt.get_method_display }}</td>
+    <td class="text-end">KES {{ pmt.amount|floatformat:2 }}</td>
+    <td>{{ pmt.get_status_display }}</td>
+    <td>{{ pmt.created_at|date:"d M Y" }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="text-muted">No payments found.</p>
+{% endif %}
+{% endblock %}

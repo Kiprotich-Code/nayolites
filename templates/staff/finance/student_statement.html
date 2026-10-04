@@ -1,0 +1,69 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Financial Statement – {{ student }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item active">Student Statement</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Financial Statement — {{ student }}</h1>
+  <small class="text-muted">{{ student.admission_number }}</small>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="nay-card p-3">
+      <div class="text-muted small">Total Billed</div>
+      <div class="fs-5 fw-semibold">KES {{ summary.total_billed|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="nay-card p-3">
+      <div class="text-muted small">Total Paid</div>
+      <div class="fs-5 fw-semibold text-success">KES {{ summary.total_paid|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="nay-card p-3">
+      <div class="text-muted small">Outstanding</div>
+      <div class="fs-5 fw-semibold text-danger">KES {{ summary.total_outstanding|floatformat:2 }}</div>
+    </div>
+  </div>
+</div>
+
+{% for enr_data in summary.enrollments %}
+<div class="nay-card mb-3">
+  <div class="nay-card-header">{{ enr_data.enrollment.course }} — {{ enr_data.enrollment.academic_period }}</div>
+  {% if enr_data.invoices %}
+  <div class="nay-table-wrapper">
+    <table class="nay-table">
+      <thead>
+        <tr>
+          <th>Invoice</th>
+          <th>Status</th>
+          <th>Payments</th>
+          <th class="text-end">Balance</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for inv in enr_data.invoices %}
+      <tr>
+        <td><a href="{% url 'staff:invoice_detail' pk=inv.pk %}">{{ inv.invoice_number }}</a></td>
+        <td><span class="badge-status status-{{ inv.status|lower }}">{{ inv.get_status_display }}</span></td>
+        <td>{{ inv.allocations.count }} payment{{ inv.allocations.count|pluralize }}</td>
+        <td class="text-end">KES {{ enr_data.balance|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="p-3 text-muted">No invoices for this enrollment.</div>
+  {% endif %}
+</div>
+{% empty %}
+<div class="nay-empty-state">No enrollment records found.</div>
+{% endfor %}
+{% endblock %}

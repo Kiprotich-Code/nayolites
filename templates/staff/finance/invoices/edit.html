@@ -1,0 +1,29 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Edit {{ invoice.invoice_number }} – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:invoices' %}">Invoices</a></li>
+<li class="breadcrumb-item"><a href="{% url 'staff:invoice_detail' pk=invoice.pk %}">{{ invoice.invoice_number }}</a></li>
+<li class="breadcrumb-item active">Edit</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Edit Invoice {{ invoice.invoice_number }}</h1>
+  <a href="{% url 'staff:invoice_detail' pk=invoice.pk %}" class="btn btn-outline-secondary btn-sm">Cancel</a>
+</div>
+<div class="nay-card p-4" style="max-width:500px">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Receipt {{ receipt.receipt_number }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; color: #111; }
+    h1 { font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+    .kv { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+    .kv-label { color: #555; font-size: 13px; }
+    .kv-value { font-weight: 600; }
+    .total { font-size: 16px; margin-top: 16px; }
+    @media print { body { margin: 20px; } }
+  </style>
+</head>
+<body>
+  <h1>OFFICIAL RECEIPT</h1>
+  <p style="color:#666; font-size:13px;">Nayolites Compute and Media College</p>
+  <div class="kv"><span class="kv-label">Receipt No.</span><span class="kv-value">{{ receipt.receipt_number }}</span></div>
+  <div class="kv"><span class="kv-label">Date</span><span class="kv-value">{{ receipt.issued_at|date:"d F Y H:i" }}</span></div>
+  <div class="kv"><span class="kv-label">Student</span><span class="kv-value">{{ receipt.payment.enrollment.student }}</span></div>
+  <div class="kv"><span class="kv-label">Admission No.</span><span class="kv-value">{{ receipt.payment.enrollment.student.admission_number }}</span></div>
+  <div class="kv"><span class="kv-label">Course</span><span class="kv-value">{{ receipt.payment.enrollment.course }}</span></div>
+  <div class="kv"><span class="kv-label">Payment Method</span><span class="kv-value">{{ receipt.payment.get_method_display }}</span></div>
+  <div class="kv"><span class="kv-label">Payment Reference</span><span class="kv-value">{{ receipt.payment.payment_reference }}</span></div>
+  <div class="kv total"><span class="kv-label">Amount Paid</span><span class="kv-value">KES {{ receipt.payment.amount|floatformat:2 }}</span></div>
+  <p style="margin-top:32px; font-size:12px; color:#888;">This is an official receipt. Please keep it for your records.</p>
+  <script>window.print();</script>
+</body>
+</html>

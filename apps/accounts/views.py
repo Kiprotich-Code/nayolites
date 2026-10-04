@@ -36,9 +36,6 @@ class LoginView(View):
     - AuditLog entries for success and failure
     - force_password_change redirect on first login
     - next= parameter support (validated against allowed hosts)
-
-    Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 17.2, 17.3
-    Security-critical.
     """
 
     template_name = 'auth/login.html'
@@ -118,6 +115,8 @@ class LoginView(View):
 
     @staticmethod
     def _get_portal_url(user):
+        if user.is_superuser:
+            return '/staff/'
         if hasattr(user, 'staffprofile') and user.is_staff:
             return '/staff/'
         if hasattr(user, 'studentprofile'):

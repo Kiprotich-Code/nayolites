@@ -1,0 +1,36 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+<h1 class="mb-4">My Invoices</h1>
+{% if invoices %}
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Invoice No.</th>
+        <th>Course</th>
+        <th>Period</th>
+        <th>Status</th>
+        <th>Issued</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for inv in invoices %}
+    <tr>
+      <td><a href="{% url 'student:my_invoice_detail' pk=inv.pk %}">{{ inv.invoice_number }}</a></td>
+      <td>{{ inv.enrollment.course.code }}</td>
+      <td>{{ inv.enrollment.academic_period }}</td>
+      <td>
+        <span class="badge bg-{% if inv.status == 'PAID' %}success{% elif inv.status == 'OVERDUE' %}danger{% elif inv.status == 'PARTIALLY_PAID' %}warning{% else %}secondary{% endif %}">
+          {{ inv.get_status_display }}
+        </span>
+      </td>
+      <td>{{ inv.issued_at|date:"d M Y"|default:"Draft" }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="text-muted">No invoices found.</p>
+{% endif %}
+{% endblock %}

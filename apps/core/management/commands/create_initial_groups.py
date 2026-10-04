@@ -73,15 +73,21 @@ class Command(BaseCommand):
             ],
 
             'Finance Officer': [
-                ('finance', 'invoice', 'view_invoice'),
-                ('finance', 'invoice', 'add_invoice'),
-                ('finance', 'invoice', 'change_invoice'),
-                ('finance', 'payment', 'view_payment'),
-                ('finance', 'payment', 'add_payment'),
-                ('finance', 'payment', 'change_payment'),
+                # Fee structures
                 ('finance', 'feestructure', 'view_feestructure'),
                 ('finance', 'feestructure', 'add_feestructure'),
                 ('finance', 'feestructure', 'change_feestructure'),
+                ('finance', 'feestructure', 'activate_feestructure'),
+                # Invoices
+                ('finance', 'invoice', 'view_invoice'),
+                ('finance', 'invoice', 'add_invoice'),
+                ('finance', 'invoice', 'issue_invoice'),
+                # Payments
+                ('finance', 'payment', 'view_payment'),
+                ('finance', 'payment', 'add_payment'),
+                ('finance', 'payment', 'allocate_payment'),
+                # Receipts
+                ('finance', 'receipt', 'view_receipt'),
                 # View-only access to academic records for finance context
                 ('students', 'studentprofile', 'view_studentprofile'),
                 ('enrollments', 'enrollment', 'view_enrollment'),

@@ -1,0 +1,35 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+{% if initiated %}
+<div class="alert alert-success">
+  <h5>Payment initiated</h5>
+  <p>An M-Pesa STK push has been sent to your phone. Enter your PIN to complete the payment.</p>
+  <p class="mb-0">Reference: <strong>{{ payment.payment_reference }}</strong></p>
+</div>
+{% else %}
+<h1 class="mb-3">Make Payment</h1>
+<p>Enrollment: <strong>{{ enrollment.course }}</strong> — {{ enrollment.academic_period }}</p>
+<p>Outstanding: <strong class="text-danger">KES {{ outstanding|floatformat:2 }}</strong></p>
+
+{% if messages %}
+{% for msg in messages %}
+<div class="alert alert-danger">{{ msg }}</div>
+{% endfor %}
+{% endif %}
+
+<div class="card p-4" style="max-width:400px">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="mb-3">
+      <label class="form-label">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+      {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors }}</div>{% endif %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-success w-100">Pay via M-Pesa</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

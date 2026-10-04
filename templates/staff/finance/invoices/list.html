@@ -1,0 +1,69 @@
+{% extends "components/base_staff_portal.html" %}
+{% block title %}Invoices – {{ college.short_name }} Staff{% endblock %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'staff:finance' %}">Finance</a></li>
+<li class="breadcrumb-item active">Invoices</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Invoices</h1>
+  {% if perms.finance.add_invoice %}<a href="{% url 'staff:invoice_create' %}" class="btn btn-primary btn-sm">New Invoice</a>{% endif %}
+</div>
+<div class="nay-card mb-3 p-3">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <input name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Invoice no, student name or admission…">
+    </div>
+    <div class="col-md-2">
+      <select name="status" class="form-select form-select-sm">
+        <option value="">All statuses</option>
+        {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-auto"><button class="btn btn-outline-secondary btn-sm">Filter</button></div>
+    {% if q or status_filter %}
+    <div class="col-auto"><a href="?" class="btn btn-link btn-sm">Clear</a></div>
+    {% endif %}
+  </form>
+</div>
+{% if page_obj.object_list %}
+<div class="nay-card">
+  <div class="nay-table-wrapper">
+    <table class="nay-table">
+      <thead>
+        <tr>
+          <th>Invoice No.</th>
+          <th>Student</th>
+          <th>Course</th>
+          <th>Period</th>
+          <th>Status</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for inv in page_obj %}
+      <tr>
+        <td><a href="{% url 'staff:invoice_detail' pk=inv.pk %}">{{ inv.invoice_number }}</a></td>
+        <td>
+          {{ inv.enrollment.student }}
+          <small class="text-muted">({{ inv.enrollment.student.admission_number }})</small>
+        </td>
+        <td>{{ inv.enrollment.course.code }}</td>
+        <td>{{ inv.enrollment.academic_period }}</td>
+        <td><span class="badge-status status-{{ inv.status|lower }}">{{ inv.get_status_display }}</span></td>
+        <td>{{ inv.created_at|date:"d M Y" }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "components/pagination.html" with page_obj=page_obj %}
+</div>
+{% else %}
+<div class="nay-empty-state">No invoices found.</div>
+{% endif %}
+{% endblock %}

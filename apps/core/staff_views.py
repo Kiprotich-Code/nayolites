@@ -44,34 +44,12 @@ ENROLLMENTS = [
     {"pk":5,"admission":"NCC/2023/0098","student":"Felix Kamau Njoroge","course":"Diploma in Computer Science","period":"2025 Semester 1","year":2,"status":"Active","sc":"success","enrolled_date":"13 Jan 2025"},
 ]
 
-INVOICES = [
-    {"invoice_number":"INV-2025-0147-01","student":"Amina Wanjiru Kariuki","admission":"NCC/2024/0147","period":"2025 Semester 1","issue_date":"10 Jan 2025","due_date":"31 Jan 2025","total":24500,"paid":15000,"balance":9500,"status":"Partially Paid","sc":"warning"},
-    {"invoice_number":"INV-2025-0148-01","student":"Brian Otieno Odhiambo","admission":"NCC/2024/0148","period":"2025 Semester 1","issue_date":"10 Jan 2025","due_date":"31 Jan 2025","total":28500,"paid":28500,"balance":0,"status":"Paid","sc":"success"},
-    {"invoice_number":"INV-2025-0149-01","student":"Catherine Njoki Muigai","admission":"NCC/2024/0149","period":"2025 Semester 1","issue_date":"10 Jan 2025","due_date":"31 Jan 2025","total":23000,"paid":0,"balance":23000,"status":"Unpaid","sc":"danger"},
-    {"invoice_number":"INV-2025-0150-01","student":"David Kipchoge Rotich","admission":"NCC/2024/0150","period":"2025 Semester 1","issue_date":"10 Jan 2025","due_date":"31 Jan 2025","total":24500,"paid":24500,"balance":0,"status":"Paid","sc":"success"},
-    {"invoice_number":"INV-2025-0151-01","student":"Esther Wambui Ndungu","admission":"NCC/2024/0151","period":"2025 Semester 1","issue_date":"10 Jan 2025","due_date":"31 Jan 2025","total":23500,"paid":10000,"balance":13500,"status":"Partially Paid","sc":"warning"},
-]
-
-PAYMENTS = [
-    {"pk":1,"receipt":"RCP-2025-00391","student":"Amina Wanjiru Kariuki","admission":"NCC/2024/0147","invoice":"INV-2025-0147-01","amount":15000,"method":"M-Pesa","reference":"QGT8RH2450","date":"28 Jan 2025","status":"Confirmed","sc":"success"},
-    {"pk":2,"receipt":"RCP-2025-00392","student":"Brian Otieno Odhiambo","admission":"NCC/2024/0148","invoice":"INV-2025-0148-01","amount":28500,"method":"Bank Transfer","reference":"TRF-NAY-20250127","date":"27 Jan 2025","status":"Confirmed","sc":"success"},
-    {"pk":3,"receipt":"RCP-2025-00393","student":"David Kipchoge Rotich","admission":"NCC/2024/0150","invoice":"INV-2025-0150-01","amount":24500,"method":"M-Pesa","reference":"PKL7MN9913","date":"26 Jan 2025","status":"Confirmed","sc":"success"},
-    {"pk":4,"receipt":"RCP-2025-00394","student":"Esther Wambui Ndungu","admission":"NCC/2024/0151","invoice":"INV-2025-0151-01","amount":10000,"method":"M-Pesa","reference":"ABC1234567","date":"25 Jan 2025","status":"Confirmed","sc":"success"},
-    {"pk":5,"receipt":"RCP-2025-00395","student":"Felix Kamau Njoroge","admission":"NCC/2023/0098","invoice":"INV-2025-0098-01","amount":24500,"method":"M-Pesa","reference":"XYZ9876543","date":"24 Jan 2025","status":"Confirmed","sc":"success"},
-]
-
 RESULTS = [
     {"pk":1,"student":"Amina Wanjiru Kariuki","admission":"NCC/2024/0147","unit_code":"DCS 201","unit_name":"Software Engineering","period":"2025 Semester 1","cat":None,"exam":None,"total":None,"grade":None,"status":"Draft","sc":"secondary"},
     {"pk":2,"student":"Brian Otieno Odhiambo","admission":"NCC/2024/0148","unit_code":"DBM 104","unit_name":"Television Production","period":"2024 Semester 2","cat":32,"exam":49,"total":81,"grade":"A-","status":"Published","sc":"success"},
     {"pk":3,"student":"Amina Wanjiru Kariuki","admission":"NCC/2024/0147","unit_code":"DCS 104","unit_name":"Data Structures and Algorithms","period":"2024 Semester 2","cat":35,"exam":51,"total":86,"grade":"A","status":"Published","sc":"success"},
     {"pk":4,"student":"Catherine Njoki Muigai","admission":"NCC/2024/0149","unit_code":"CGD 101","unit_name":"Principles of Design","period":"2024 Semester 2","cat":28,"exam":44,"total":72,"grade":"B","status":"Approved","sc":"info"},
     {"pk":5,"student":"David Kipchoge Rotich","admission":"NCC/2024/0150","unit_code":"DCS 104","unit_name":"Data Structures and Algorithms","period":"2024 Semester 2","cat":22,"exam":38,"total":60,"grade":"B-","status":"Review","sc":"warning"},
-]
-
-FEE_STRUCTURES = [
-    {"pk":1,"name":"DCS Standard Fee 2025","course":"Diploma in Computer Science","period":"2025 Semester 1","status":"Active","items":[{"name":"Tuition Fee","amount":18000},{"name":"Materials Fee","amount":3000},{"name":"Examination Fee","amount":2500},{"name":"Student Activity Levy","amount":500},{"name":"Library Fee","amount":500}],"total":24500},
-    {"pk":2,"name":"DBM Standard Fee 2025","course":"Diploma in Broadcast Media","period":"2025 Semester 1","status":"Active","items":[{"name":"Tuition Fee","amount":20000},{"name":"Materials Fee","amount":4000},{"name":"Examination Fee","amount":2500},{"name":"Student Activity Levy","amount":500},{"name":"Library Fee","amount":500}],"total":27500},
-    {"pk":3,"name":"CGD Standard Fee 2025","course":"Certificate in Graphic Design","period":"2025 Semester 1","status":"Active","items":[{"name":"Tuition Fee","amount":14000},{"name":"Materials Fee","amount":5000},{"name":"Examination Fee","amount":2000},{"name":"Student Activity Levy","amount":500},{"name":"Library Fee","amount":500}],"total":22000},
 ]
 
 CONTENT = [
@@ -208,47 +186,6 @@ def staff_enrollments(request):
 def staff_academic_periods(request):
     from django.shortcuts import redirect
     return redirect('staff:academic_periods')
-
-@login_required(login_url='/auth/login/')
-def staff_finance(request):
-    total_billed = sum(i["total"] for i in INVOICES)
-    total_paid   = sum(i["paid"]  for i in INVOICES)
-    ctx = _base("Finance", "finance")
-    ctx.update({"invoices": INVOICES[:5], "payments": PAYMENTS[:5], "total_billed": total_billed, "total_paid": total_paid, "outstanding": total_billed - total_paid, "fee_structures": FEE_STRUCTURES})
-    return render(request, "staff/finance.html", ctx)
-
-@login_required(login_url='/auth/login/')
-def staff_fee_structures(request):
-    ctx = _base("Fee Structures", "finance")
-    ctx.update({"structures": FEE_STRUCTURES})
-    return render(request, "staff/fee_structures.html", ctx)
-
-@login_required(login_url='/auth/login/')
-def staff_invoices(request):
-    ctx = _base("Invoices", "finance")
-    ctx.update({"invoices": INVOICES, "periods": PERIODS})
-    return render(request, "staff/invoices.html", ctx)
-
-@login_required(login_url='/auth/login/')
-def staff_invoice_detail(request, invoice_number):
-    inv = next((i for i in INVOICES if i["invoice_number"]==invoice_number), INVOICES[0])
-    pmts = [p for p in PAYMENTS if p.get("invoice")==invoice_number]
-    ctx = _base("Invoice " + invoice_number, "finance")
-    ctx.update({"invoice": inv, "payments": pmts})
-    return render(request, "staff/invoice_detail.html", ctx)
-
-@login_required(login_url='/auth/login/')
-def staff_payments(request):
-    ctx = _base("Payments", "finance")
-    ctx.update({"payments": PAYMENTS})
-    return render(request, "staff/payments.html", ctx)
-
-@login_required(login_url='/auth/login/')
-def staff_payment_detail(request, pk):
-    pmt = next((p for p in PAYMENTS if p["pk"]==pk), PAYMENTS[0])
-    ctx = _base("Payment " + pmt["receipt"], "finance")
-    ctx.update({"payment": pmt})
-    return render(request, "staff/payment_detail.html", ctx)
 
 @login_required(login_url='/auth/login/')
 def staff_results(request):

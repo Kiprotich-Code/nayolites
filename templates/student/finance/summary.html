@@ -1,0 +1,41 @@
+{% extends "student/base_student.html" %}
+{% block content %}
+<h1 class="mb-4">My Finances</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-4">
+    <div class="card p-3 border">
+      <div class="text-muted small">Total Billed</div>
+      <div class="fs-5 fw-semibold">KES {{ summary.total_billed|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card p-3 border">
+      <div class="text-muted small">Total Paid</div>
+      <div class="fs-5 fw-semibold text-success">KES {{ summary.total_paid|floatformat:2 }}</div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card p-3 border">
+      <div class="text-muted small">Outstanding</div>
+      <div class="fs-5 fw-semibold text-danger">KES {{ summary.total_outstanding|floatformat:2 }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex gap-2 mb-4">
+  <a href="{% url 'student:my_invoices' %}" class="btn btn-outline-primary btn-sm">My Invoices</a>
+  <a href="{% url 'student:my_payments' %}" class="btn btn-outline-primary btn-sm">My Payments</a>
+  <a href="{% url 'student:my_receipts' %}" class="btn btn-outline-primary btn-sm">My Receipts</a>
+  <a href="{% url 'student:my_statement' %}" class="btn btn-outline-secondary btn-sm">Statement</a>
+</div>
+
+{% for enr_data in summary.enrollments %}
+{% if enr_data.balance > 0 %}
+<div class="alert alert-warning">
+  <strong>{{ enr_data.enrollment.course }}</strong> — Outstanding: KES {{ enr_data.balance|floatformat:2 }}
+  <a href="{% url 'student:pay' enrollment_pk=enr_data.enrollment.pk %}" class="btn btn-warning btn-sm ms-3">Pay Now</a>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}
