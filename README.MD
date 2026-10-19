@@ -1,4 +1,4 @@
-# Nayolites College Management System
+# College Management System
 
 A Django web application for managing college accounts, students, courses,
 enrollments, fees, payments, results, and course materials.
