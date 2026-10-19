@@ -7,6 +7,8 @@ permission flags into every template context.
 
 from datetime import datetime
 
+from django.conf import settings
+
 
 def college_settings(request):
     """
@@ -15,15 +17,15 @@ def college_settings(request):
     """
     ctx = {
         'college': {
-            'name': 'Nayolites Compute and Media College',
-            'short_name': 'Nayolites',
-            'tagline': 'Computing. Creating. Leading.',
-            'address': 'Kimathi Street, Nairobi, Kenya',
-            'phone': '+254 700 123 456',
-            'email': 'info@nayolites.ac.ke',
-            'website': 'www.nayolites.ac.ke',
-            'currency': 'KES',
-            'currency_symbol': 'Ksh',
+            'name': settings.COLLEGE_NAME,
+            'short_name': settings.COLLEGE_SHORT_NAME,
+            'tagline': settings.COLLEGE_TAGLINE,
+            'address': settings.COLLEGE_ADDRESS,
+            'phone': settings.COLLEGE_PHONE,
+            'email': settings.COLLEGE_EMAIL,
+            'website': settings.COLLEGE_WEBSITE,
+            'currency': settings.COLLEGE_CURRENCY,
+            'currency_symbol': settings.COLLEGE_CURRENCY_SYMBOL,
             'year': datetime.now().year,
         }
     }

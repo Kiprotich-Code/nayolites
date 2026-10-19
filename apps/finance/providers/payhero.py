@@ -7,10 +7,10 @@ All exceptions raised here use PayHeroError, imported from services.
 """
 import hashlib
 import hmac
-import os
 from decimal import Decimal
 
 import requests as _requests
+from django.conf import settings
 
 # PayHeroError is defined in apps/finance/services to avoid circular imports.
 # Import it lazily inside functions when needed.
@@ -20,11 +20,11 @@ def verify_webhook_signature(payload_bytes: bytes, signature_header: str) -> boo
     """
     Verify a PayHero webhook callback using HMAC-SHA256.
 
-    Reads PAYHERO_WEBHOOK_SECRET from the environment.
+    Reads PAYHERO_WEBHOOK_SECRET from Django settings.
     Uses hmac.compare_digest() for constant-time comparison.
     Returns True if valid, False otherwise (including empty secret).
     """
-    secret = os.environ.get('PAYHERO_WEBHOOK_SECRET', '')
+    secret = settings.PAYHERO_WEBHOOK_SECRET
     if not secret:
         # If no secret configured, reject all webhooks in production.
         # In development (secret=''), this will always return False — configure the secret.
@@ -44,14 +44,14 @@ def initiate_stk_push(phone: str, amount, reference: str, callback_url: str) -> 
     """
     Initiate an M-Pesa STK push via the PayHero API.
 
-    Reads PAYHERO_API_KEY and PAYHERO_CHANNEL_ID from the environment.
+    Reads PAYHERO_API_KEY and PAYHERO_CHANNEL_ID from Django settings.
     Returns the raw JSON response dict on success.
     Raises PayHeroError on any HTTP error or network failure.
     """
     from apps.finance.services import PayHeroError
 
-    api_key = os.environ.get('PAYHERO_API_KEY', '')
-    channel_id = os.environ.get('PAYHERO_CHANNEL_ID', '')
+    api_key = settings.PAYHERO_API_KEY
+    channel_id = settings.PAYHERO_CHANNEL_ID
 
     if not api_key or not channel_id:
         raise PayHeroError(

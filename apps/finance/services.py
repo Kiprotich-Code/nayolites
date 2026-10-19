@@ -584,6 +584,10 @@ def initiate_payhero_payment(enrollment, amount, phone, initiated_by=None):
     from django.conf import settings
     from apps.finance.providers import payhero as _payhero
 
+    callback_url = settings.PAYHERO_CALLBACK_URL
+    if not callback_url:
+        raise PayHeroError('Set PAYHERO_CALLBACK_URL before enabling PayHero payments.')
+
     amount = Decimal(str(amount))
     year = timezone.now().year
     ref = generate_payment_reference(year)
@@ -613,8 +617,6 @@ def initiate_payhero_payment(enrollment, amount, phone, initiated_by=None):
         )
 
     # API call OUTSIDE transaction (network I/O must not hold a DB transaction)
-    callback_url = getattr(settings, 'PAYHERO_CALLBACK_URL',
-                           'https://example.com/finance/callbacks/payhero/')
     try:
         api_response = _payhero.initiate_stk_push(
             phone=phone,

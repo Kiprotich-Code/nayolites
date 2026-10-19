@@ -4,6 +4,7 @@ Django settings for the Nayolites Compute and Media College platform.
 
 from pathlib import Path
 from decouple import config, Csv
+from django.core.exceptions import ImproperlyConfigured
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -17,14 +18,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config(
     'SECRET_KEY',
-    default='REDACTED_DJANGO_SECRET',
+    default='',
 )
+if not SECRET_KEY:
+    raise ImproperlyConfigured('Set SECRET_KEY in your environment or .env file.')
 
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
-
-# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='localhost,127.0.0.1',
+    cast=Csv(),
+)
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='',
+    cast=Csv(),
+)
 
 # ---------------------------------------------------------------------------
 # Application definition
@@ -96,31 +106,29 @@ WSGI_APPLICATION = 'nayolites.wsgi.application'
 # Database
 # ---------------------------------------------------------------------------
 
+DATABASE_ENGINE = config(
+    'DB_ENGINE',
+    default='django.db.backends.sqlite3',
+)
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "neondb",
-        "USER": "REDACTED_DATABASE_USER",
-        "PASSWORD": "REDACTED_DATABASE_PASSWORD",
-        "HOST": "ep-royal-thunder-b4idgmxg-pooler.c-6.us-east-2.aws.neon.tech",
-        "PORT": "5432",
+    'default': {
+        'ENGINE': DATABASE_ENGINE,
+        'NAME': config('DB_NAME', default=str(BASE_DIR / 'db.sqlite3')),
+        'USER': config('DB_USER', default=''),
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default=''),
+        'PORT': config('DB_PORT', default=''),
     }
 }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "neondb",
-#         "USER": "REDACTED_DATABASE_USER",
-#         "PASSWORD": "REDACTED_DATABASE_PASSWORD",
-#         "HOST": "ep-steep-mountain-b5y9zmxi-pooler.c-7.us-east-2.aws.neon.tech",
-#         "PORT": "5432",
-#         "OPTIONS": {
-#             "sslmode": "require",
-#             "channel_binding": "require",
-#         },
-#     }
-# }
+if DATABASE_ENGINE == 'django.db.backends.postgresql':
+    sslmode = config(
+        'DB_SSLMODE',
+        default='prefer' if DEBUG else 'require',
+    )
+    if not sslmode and not DEBUG:
+        sslmode = 'require'
+    if sslmode:
+        DATABASES['default']['OPTIONS'] = {'sslmode': sslmode}
 
 # ---------------------------------------------------------------------------
 # Authentication
@@ -195,6 +203,30 @@ EMAIL_BACKEND = config(
     'EMAIL_BACKEND',
     default='django.core.mail.backends.console.EmailBackend',
 )
+EMAIL_HOST = config('EMAIL_HOST', default='')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+DEFAULT_FROM_EMAIL = config(
+    'DEFAULT_FROM_EMAIL',
+    default='webmaster@localhost',
+)
+
+# ---------------------------------------------------------------------------
+# Institution profile
+# ---------------------------------------------------------------------------
+
+COLLEGE_NAME = config('COLLEGE_NAME', default='Nayolites Compute and Media College')
+COLLEGE_SHORT_NAME = config('COLLEGE_SHORT_NAME', default='Nayolites')
+COLLEGE_TAGLINE = config('COLLEGE_TAGLINE', default='Computing. Creating. Leading.')
+COLLEGE_ADDRESS = config('COLLEGE_ADDRESS', default='Kimathi Street, Nairobi, Kenya')
+COLLEGE_PHONE = config('COLLEGE_PHONE', default='+254 700 123 456')
+COLLEGE_EMAIL = config('COLLEGE_EMAIL', default='info@nayolites.ac.ke')
+COLLEGE_WEBSITE = config('COLLEGE_WEBSITE', default='www.nayolites.ac.ke')
+COLLEGE_CURRENCY = config('COLLEGE_CURRENCY', default='KES')
+COLLEGE_CURRENCY_SYMBOL = config('COLLEGE_CURRENCY_SYMBOL', default='Ksh')
 
 # ---------------------------------------------------------------------------
 # Django REST Framework
@@ -241,6 +273,27 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
+SECURE_SSL_REDIRECT = config(
+    'SECURE_SSL_REDIRECT',
+    default=not DEBUG,
+    cast=bool,
+)
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
+    'SECURE_HSTS_INCLUDE_SUBDOMAINS',
+    default=False,
+    cast=bool,
+)
+SECURE_HSTS_PRELOAD = config(
+    'SECURE_HSTS_PRELOAD',
+    default=False,
+    cast=bool,
+)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'same-origin'
+if config('TRUST_X_FORWARDED_PROTO', default=False, cast=bool):
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # ---------------------------------------------------------------------------
 # Finance
 # ---------------------------------------------------------------------------
@@ -250,4 +303,4 @@ FINANCE_MINIMUM_PAYMENT_FLOOR = _Decimal('500.00')
 PAYHERO_API_KEY = config('PAYHERO_API_KEY', default='')
 PAYHERO_CHANNEL_ID = config('PAYHERO_CHANNEL_ID', default='')
 PAYHERO_WEBHOOK_SECRET = config('PAYHERO_WEBHOOK_SECRET', default='')
-PAYHERO_CALLBACK_URL = config('PAYHERO_CALLBACK_URL', default='https://example.com/finance/callbacks/payhero/')
+PAYHERO_CALLBACK_URL = config('PAYHERO_CALLBACK_URL', default='')
